@@ -6,8 +6,102 @@ export interface PortfolioImage {
   category: "fashion" | "wedding" | "portrait";
   aspect: "tall" | "wide" | "square";
 }
+export const portfolioImages: PortfolioImage[] = [
+  {
+    id: 1,
+    src: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80",
+    alt: "Editorial fashion în lumină de studio",
+    category: "fashion",
+    aspect: "tall",
+  },
+  {
+    id: 2,
+    src: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
+    alt: "Moment intim de la ceremonia nunții",
+    category: "wedding",
+    aspect: "wide",
+  },
+  {
+    id: 3,
+    src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&q=80",
+    alt: "Portret artistic cu iluminare dramatică",
+    category: "portrait",
+    aspect: "tall",
+  },
+  {
+    id: 4,
+    src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80",
+    alt: "High fashion editorial on location",
+    category: "fashion",
+    aspect: "square",
+  },
+  {
+    id: 5,
+    src: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80",
+    alt: "Cuplu la nuntă în ora de aur",
+    category: "wedding",
+    aspect: "tall",
+  },
+  {
+    id: 6,
+    src: "https://images.unsplash.com/photo-1504703395950-b89145a5425b?w=800&q=80",
+    alt: "Fashion editorial cu stil îndrăzneț",
+    category: "fashion",
+    aspect: "wide",
+  },
+  {
+    id: 7,
+    src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80",
+    alt: "Portret cinematic în lumină naturală",
+    category: "portrait",
+    aspect: "square",
+  },
+  {
+    id: 8,
+    src: "https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=800&q=80",
+    alt: "Detalii de nuntă și aranjamente florale",
+    category: "wedding",
+    aspect: "wide",
+  },
+  {
+    id: 9,
+    src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80",
+    alt: "Portret de studio în stil editorial",
+    category: "portrait",
+    aspect: "tall",
+  },
+  {
+    id: 10,
+    src: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80",
+    alt: "Fashion model editorial runway",
+    category: "fashion",
+    aspect: "tall",
+  },
+  {
+    id: 11,
+    src: "https://images.unsplash.com/photo-1606216794079-73f85bbd57d5?w=800&q=80",
+    alt: "Primul dans elegant la nuntă",
+    category: "wedding",
+    aspect: "square",
+  },
+  {
+    id: 12,
+    src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80",
+    alt: "Portret masculin, compoziție artistică",
+    category: "portrait",
+    aspect: "wide",
+  },
+];
 
 
+export interface ServicePackage {
+  id: "standard" | "premium" | "editorial";
+  name: string;
+  price: number;
+  currency: string;
+  features: string[];
+  highlighted: boolean;
+}
 export const servicePackages: ServicePackage[] = [
   {
     id: "standard",
