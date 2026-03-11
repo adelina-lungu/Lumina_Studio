@@ -6,6 +6,7 @@ import Services from "./components/Services";
 import Booking from "./components/Booking";
 import Footer from "./components/Footer";
 import type { ServicePackage } from "./data/mock";
+import AboutUs from "./components/AboutUs";
 
 function App() {
   const [preselectedPackage, setPreselectedPackage] =
@@ -24,6 +25,7 @@ function App() {
         <Hero />
         <Portfolio />
         <Services onSelectPackage={handleSelectPackage} />
+        <AboutUs />
         <div ref={bookingRef}>
           <Booking preselectedPackage={preselectedPackage} />
         </div>
