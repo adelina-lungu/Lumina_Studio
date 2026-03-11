@@ -206,6 +206,8 @@ export const photographers: Photographer[] = [
 
 export const navLinks = [
   { label: "Portofoliu", href: "#portfolio" },
+  { label: "Despre Noi", href: "#about" },
   { label: "Servicii", href: "#services" },
   { label: "Programare", href: "#booking" },
 ] as const;
+  
