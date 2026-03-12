@@ -7,6 +7,7 @@ import Booking from "./components/Booking";
 import Footer from "./components/Footer";
 import type { ServicePackage } from "./data/mock";
 import AboutUs from "./components/AboutUs";
+import BackToTop from "./components/BackToTop";
 
 function App() {
   const [preselectedPackage, setPreselectedPackage] =
@@ -31,6 +32,7 @@ function App() {
         </div>
       </main>
       <Footer />
+      <BackToTop />
     </div>
   );
 }
