@@ -254,6 +254,7 @@ export const navLinks = [
   { label: "Echipa", href: "#team" },
   { label: "Servicii", href: "#services" },
   { label: "Programare", href: "#booking" },
+  { label: "Recenzii", href: "#testimonials" },
 ] as const;
 
 

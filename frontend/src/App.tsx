@@ -10,6 +10,7 @@ import AboutUs from "./components/AboutUs";
 import BackToTop from "./components/BackToTop";
 import Process from "./components/Process";
 import Team from "./components/Team"; 
+import Testimonials from "./components/Testimonials";
 
 
 
@@ -32,6 +33,7 @@ function App() {
         <Services onSelectPackage={handleSelectPackage} />
         <Process />
         <Team />
+        <Testimonials />
         <AboutUs />
         <div ref={bookingRef}>
           <Booking preselectedPackage={preselectedPackage} />
