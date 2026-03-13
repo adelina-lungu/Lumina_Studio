@@ -11,6 +11,7 @@ import BackToTop from "./components/BackToTop";
 import Process from "./components/Process";
 import Team from "./components/Team"; 
 import Testimonials from "./components/Testimonials";
+import Faq from "./components/Faq";
 
 
 
@@ -33,6 +34,7 @@ function App() {
         <Services onSelectPackage={handleSelectPackage} />
         <Process />
         <Team />
+        <Faq />
         <Testimonials />
         <AboutUs />
         <div ref={bookingRef}>
