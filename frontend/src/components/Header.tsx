@@ -2,7 +2,11 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { navLinks } from "../data/mock";
 
-export default function Header() {
+interface HeaderProps {
+  onOpenBooking: () => void;
+}
+
+export default function Header({ onOpenBooking }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -11,6 +15,16 @@ export default function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const handleClick = (href: string) => {
+    if (href === "#booking") {
+      onOpenBooking();
+    }
+    setMobileOpen(false);
+  };
+
+  const linkClass =
+    "relative text-sm font-medium tracking-wide text-stone-400 transition-colors duration-300 hover:text-stone-100 after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gold-400 after:transition-all after:duration-300 hover:after:w-full";
 
   return (
     <header
@@ -21,7 +35,6 @@ export default function Header() {
       }`}
     >
       <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5 md:px-10">
-        {/* Logo */}
         <a href="#" className="group flex items-center gap-2">
           <span className="font-serif text-2xl font-semibold tracking-[0.2em] text-stone-100 transition-colors group-hover:text-gold-400">
             LUMINA
@@ -32,13 +45,15 @@ export default function Header() {
         <ul className="hidden items-center gap-10 md:flex">
           {navLinks.map((link) => (
             <li key={link.href}>
-              <a
-                href={link.href}
-                className="relative text-sm font-medium tracking-wide text-stone-400 transition-colors duration-300 hover:text-stone-100
-                  after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gold-400 after:transition-all after:duration-300 hover:after:w-full"
-              >
-                {link.label}
-              </a>
+              {link.href === "#booking" ? (
+                <button onClick={() => handleClick("#booking")} className={`${linkClass} cursor-pointer`}>
+                  {link.label}
+                </button>
+              ) : (
+                <a href={link.href} className={linkClass}>
+                  {link.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>
@@ -56,19 +71,21 @@ export default function Header() {
       {/* Mobile menu */}
       <div
         className={`overflow-hidden border-b border-stone-800/50 bg-stone-950/95 backdrop-blur-xl transition-all duration-300 md:hidden ${
-          mobileOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0 border-none"
+          mobileOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0 border-none"
         }`}
       >
         <ul className="flex flex-col gap-4 px-6 py-6">
           {navLinks.map((link) => (
             <li key={link.href}>
-              <a
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="block text-lg font-medium text-stone-300 transition-colors hover:text-gold-400"
-              >
-                {link.label}
-              </a>
+              {link.href === "#booking" ? (
+                <button onClick={() => handleClick("#booking")} className="block text-lg font-medium text-stone-300 transition-colors hover:text-gold-400 cursor-pointer">
+                  {link.label}
+                </button>
+              ) : (
+                <a href={link.href} onClick={() => setMobileOpen(false)} className="block text-lg font-medium text-stone-300 transition-colors hover:text-gold-400">
+                  {link.label}
+                </a>
+              )}
             </li>
           ))}
         </ul>
