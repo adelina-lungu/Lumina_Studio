@@ -16,15 +16,13 @@ import CtaBanner from "./components/CtaBanner";
 import Contact from "./components/Contact";
 import BookingDrawer from "./components/BookingDrawer";
 import AuthModal from "./components/AuthModal";
+import ChatWidget from "./components/ChatWidget";
 import NotFoundPage from "./errors/NotFoundPage";
-import { useAuth } from "./contexts/AuthContext";
 import ServerErrorPage from "./errors/ServerErrorPage";
 import ForbiddenPage from "./errors/ForbiddenPage";
 import PhotographerProfile from "./pages/PhotographerProfile";
-import ChatWidget from "./components/ChatWidget";
 import AdminSupport from "./pages/AdminSupport";
-
-
+import { useAuth } from "./contexts/AuthContext";
 
 function HomePage() {
   const [preselectedPackage, setPreselectedPackage] = useState<ServicePackage | null>(null);
@@ -57,7 +55,7 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100">
       <Header onOpenBooking={handleOpenBooking} />
-      <main className="pt-[72px]">
+      <main>
         <Hero />
         <Portfolio />
         <Services onSelectPackage={handleSelectPackage} />
