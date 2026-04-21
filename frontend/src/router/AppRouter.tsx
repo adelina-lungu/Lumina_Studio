@@ -1,6 +1,14 @@
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import HomePage from "../pages/HomePage";
+import PortfolioPage from "../pages/Portfolio/PortfolioPage";
+import ServicesPage from "../pages/Services/ServicesPage";
+import TeamPage from "../pages/Team/TeamPage";
+import AboutPage from "../pages/About/AboutPage";
+import FaqPage from "../pages/Faq/FaqPage";
+import TestimonialsPage from "../pages/Testimonials/TestimonialsPage";
+import ContactPage from "../pages/Contact/ContactPage";
+import BookingPage from "../pages/Booking/BookingPage";
 import PhotographerProfile from "../pages/PhotographerProfile";
 import AdminSupport from "../pages/AdminSupport";
 import NotFoundPage from "../errors/NotFoundPage";
@@ -13,6 +21,14 @@ export default function AppRouter() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route path={ROUTES.home} element={<HomePage />} />
+        <Route path={ROUTES.portfolio} element={<PortfolioPage />} />
+        <Route path={ROUTES.services} element={<ServicesPage />} />
+        <Route path={ROUTES.team} element={<TeamPage />} />
+        <Route path={ROUTES.about} element={<AboutPage />} />
+        <Route path={ROUTES.faq} element={<FaqPage />} />
+        <Route path={ROUTES.testimonials} element={<TestimonialsPage />} />
+        <Route path={ROUTES.contact} element={<ContactPage />} />
+        <Route path={ROUTES.booking} element={<BookingPage />} />
         <Route path="/photographer/:id" element={<PhotographerProfile />} />
       </Route>
 
