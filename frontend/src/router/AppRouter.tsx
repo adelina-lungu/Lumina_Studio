@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
+import ScrollToTop from "./ScrollToTop";
 import MainLayout from "../layouts/MainLayout";
-import HomePage from "../pages/HomePage";
+import HomePage from "../pages/Home/HomePage";
 import PortfolioPage from "../pages/Portfolio/PortfolioPage";
 import ServicesPage from "../pages/Services/ServicesPage";
 import TeamPage from "../pages/Team/TeamPage";
@@ -18,6 +19,8 @@ import { ROUTES } from "../constants";
 
 export default function AppRouter() {
   return (
+    <>
+    <ScrollToTop />
     <Routes>
       <Route element={<MainLayout />}>
         <Route path={ROUTES.home} element={<HomePage />} />
@@ -37,5 +40,6 @@ export default function AppRouter() {
       <Route path={ROUTES.serverError} element={<ServerErrorPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
+    </>
   );
 }
