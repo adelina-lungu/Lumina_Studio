@@ -10,6 +10,7 @@ import type { ServicePackage } from "../data/mock";
 
 export interface LayoutContext {
   requireAuth: (cb: () => void) => void;
+  openAuth: () => void;
   openBooking: () => void;
   selectPackage: (pkg: ServicePackage) => void;
 }
@@ -37,11 +38,13 @@ export default function MainLayout() {
       setBookingOpen(true);
     });
 
-  const ctx: LayoutContext = { requireAuth, openBooking, selectPackage };
+  const openAuth = () => setAuthOpen(true);
+
+  const ctx: LayoutContext = { requireAuth, openAuth, openBooking, selectPackage };
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100">
-      <Header onOpenBooking={openBooking} />
+      <Header onOpenBooking={openBooking} onOpenAuth={openAuth} />
       <Outlet context={ctx} />
       <Footer />
       <BackToTop />
