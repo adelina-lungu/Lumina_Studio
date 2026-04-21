@@ -1,32 +1,33 @@
+import { useOutletContext } from "react-router-dom";
 import Hero from "../components/Hero";
 import Portfolio from "../components/Portfolio";
+import Services from "../components/Services";
+import Process from "../components/Process";
+import Testimonials from "../components/Testimonials";
 import AboutUs from "../components/AboutUs";
 import Team from "../components/Team";
-import Services from "../components/Services";
-import Booking from "../components/Booking";
-import { useRef, useState } from "react";
-import type { ServicePackage } from "../data/mock";
+import Faq from "../components/Faq";
+import CtaBanner from "../components/CtaBanner";
+import Contact from "../components/Contact";
+import type { LayoutContext } from "../layouts/MainLayout";
 
 export default function HomePage() {
-  const [preselectedPackage, setPreselectedPackage] =
-    useState<ServicePackage | null>(null);
-  const bookingRef = useRef<HTMLDivElement>(null);
-
-  const handleSelectPackage = (pkg: ServicePackage) => {
-    setPreselectedPackage(pkg);
-    bookingRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const { openBooking, selectPackage } = useOutletContext<LayoutContext>();
 
   return (
     <>
-      <Hero />
-      <Portfolio />
-      <AboutUs />
-      <Team />
-      <Services onSelectPackage={handleSelectPackage} />
-      <div ref={bookingRef}>
-        <Booking preselectedPackage={preselectedPackage} />
-      </div>
+      <main>
+        <Hero />
+        <Portfolio />
+        <Services onSelectPackage={selectPackage} />
+        <Process />
+        <Testimonials />
+        <Team />
+        <AboutUs />
+        <Faq />
+        <CtaBanner onOpenBooking={openBooking} />
+      </main>
+      <Contact />
     </>
   );
 }
