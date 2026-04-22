@@ -10,7 +10,7 @@ import FaqPage from "../pages/Faq/FaqPage";
 import TestimonialsPage from "../pages/Testimonials/TestimonialsPage";
 import ContactPage from "../pages/Contact/ContactPage";
 import BookingPage from "../pages/Booking/BookingPage";
-import PhotographerProfile from "../pages/PhotographerProfile";
+import PhotographerProfile from "../pages/Photographer/PhotographerPage";
 import AdminSupport from "../pages/AdminSupport/AdminSupportPage";
 import NotFoundPage from "../errors/NotFoundPage";
 import ServerErrorPage from "../errors/ServerErrorPage";
