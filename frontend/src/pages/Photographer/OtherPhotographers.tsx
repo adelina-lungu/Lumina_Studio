@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import type { TeamMember } from "../../data/mock";
+import type { TeamMember } from "../../types";
 import { ROUTES } from "../../constants";
 
 interface Props {

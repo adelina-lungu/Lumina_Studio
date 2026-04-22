@@ -6,7 +6,7 @@ import BackToTop from "../components/BackToTop";
 import BookingDrawer from "../components/BookingDrawer";
 import AuthModal from "../components/AuthModal";
 import { useAuth } from "../contexts/AuthContext";
-import type { ServicePackage } from "../data/mock";
+import type { ServicePackage } from "../types";
 
 export interface LayoutContext {
   requireAuth: (cb: () => void) => void;

@@ -1,4 +1,4 @@
-import type { ServicePackage } from "../data/mock";
+import type { ServicePackage } from "../types";
 import BookingModal from "./BookingModal";
 import PhotographerStep from "./booking/PhotographerStep";
 import CalendarStep from "./booking/CalendarStep";

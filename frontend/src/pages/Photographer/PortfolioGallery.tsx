@@ -1,4 +1,4 @@
-import type { PortfolioImage } from "../../data/mock";
+import type { PortfolioImage } from "../../types";
 
 interface Props {
   firstName: string;

@@ -1,6 +1,6 @@
 import { Camera } from "lucide-react";
 import { photographers } from "../../data/mock";
-import type { Photographer } from "../../data/mock";
+import type { Photographer } from "../../types";
 import BookingSection from "./BookingSection";
 
 interface Props {

@@ -1,10 +1,12 @@
-export interface PortfolioImage {
-  id: number;
-  src: string;
-  alt: string;
-  category: "fashion" | "wedding" | "portrait";
-  aspect: "tall" | "wide" | "square";
-}
+import type {
+  PortfolioImage,
+  ServicePackage,
+  Photographer,
+  Testimonial,
+  FaqItem,
+  TeamMember,
+} from "../types";
+
 export const portfolioImages: PortfolioImage[] = [
   {
     id: 1,
@@ -93,14 +95,6 @@ export const portfolioImages: PortfolioImage[] = [
 ];
 
 
-export interface ServicePackage {
-  id: "standard" | "premium" | "editorial";
-  name: string;
-  price: number;
-  currency: string;
-  features: string[];
-  highlighted: boolean;
-}
 export const servicePackages: ServicePackage[] = [
   {
     id: "standard",
@@ -147,14 +141,6 @@ export const servicePackages: ServicePackage[] = [
     highlighted: false,
   },
 ];
-
-export interface Photographer {
-  id: string;
-  name: string;
-  specialty: string;
-  avatar: string;
-  busyDates: string[];
-}
 
 export const photographers: Photographer[] = [
   {
@@ -203,15 +189,6 @@ export const photographers: Photographer[] = [
 ];
 
 /* ── Testimoniale ─────────────────────────── */
-export interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  avatar: string;
-  text: string;
-  rating: number;
-}
-
 export const testimonials: Testimonial[] = [
   {
     id: 1,
@@ -248,12 +225,6 @@ export const testimonials: Testimonial[] = [
 ];
 
 /* ── FAQ ──────────────────────────────────── */
-export interface FaqItem {
-  id: number;
-  question: string;
-  answer: string;
-}
-
 export const faqItems: FaqItem[] = [
   {
     id: 1,
@@ -298,20 +269,6 @@ export const navLinks = [
   { label: "Contact", href: "#contact" },
   { label: "Recenzii", href: "#testimonials" },
 ] as const;
-
-export interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  bio: string;
-  avatar: string;
-  cover: string;
-  socials: {
-    instagram?: string;
-    facebook?: string;
-    website?: string;
-  };
-}
 
 export const teamMembers: TeamMember[] = [
   {

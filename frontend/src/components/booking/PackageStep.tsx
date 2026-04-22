@@ -1,6 +1,6 @@
 import { Package, Users } from "lucide-react";
 import { servicePackages } from "../../data/mock";
-import type { ServicePackage } from "../../data/mock";
+import type { ServicePackage } from "../../types";
 import BookingSection from "./BookingSection";
 
 interface Props {

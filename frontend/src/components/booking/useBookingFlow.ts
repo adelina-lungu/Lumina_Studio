@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { photographers } from "../../data/mock";
-import type { Photographer, ServicePackage } from "../../data/mock";
+import type { Photographer, ServicePackage } from "../../types";
 
 export function useBookingFlow(preselectedPackage: ServicePackage | null) {
   const [selectedPhotographer, setSelectedPhotographer] = useState<Photographer>(photographers[0]);

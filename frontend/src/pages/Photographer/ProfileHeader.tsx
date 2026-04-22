@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Award, Camera, Facebook, Globe, Heart, Instagram } from "lucide-react";
-import type { TeamMember } from "../../data/mock";
+import type { TeamMember } from "../../types";
 import { ROUTES } from "../../constants";
 
 interface Props {
