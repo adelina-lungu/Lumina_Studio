@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Camera, Mail, Phone, Shield } from "lucide-react";
 import type { User } from "../../contexts/AuthContext";
 
@@ -11,8 +12,21 @@ interface Props {
   onSave: () => void;
 }
 
+const isValidPhone = (p: string) => !p.trim() || /^\+?[0-9]{7,15}$/.test(p.replace(/\s/g, ""));
+
 export default function ProfileInfo({ user, editName, setEditName, editPhone, setEditPhone, hasChanges, onSave }: Props) {
   const initials = user.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
+  const [touchedName, setTouchedName] = useState(false);
+  const [touchedPhone, setTouchedPhone] = useState(false);
+
+  const nameError = touchedName && !editName.trim() ? "Numele este obligatoriu." : undefined;
+  const phoneError = touchedPhone && !isValidPhone(editPhone) ? "Format invalid (ex: +373 60123456)." : undefined;
+  const canSave = hasChanges && !nameError && !phoneError && editName.trim().length > 0;
+
+  const inputClass = (hasError: boolean) =>
+    `w-full rounded-lg border bg-stone-900 px-4 py-2.5 text-sm text-stone-100 outline-none transition-colors ${
+      hasError ? "border-red-500/60 focus:border-red-500" : "border-stone-800 focus:border-gold-400/50"
+    }`;
 
   return (
     <section className="mx-auto w-full max-w-2xl px-6 pt-32 pb-12">
@@ -53,12 +67,14 @@ export default function ProfileInfo({ user, editName, setEditName, editPhone, se
         <h2 className="text-sm font-medium tracking-[0.2em] uppercase text-stone-500">Editare profil</h2>
 
         <div>
-          <label className="mb-1.5 block text-xs font-medium text-stone-400">Nume</label>
+          <label className="mb-1.5 block text-xs font-medium text-stone-400">Nume <span className="text-red-400">*</span></label>
           <input
             value={editName}
             onChange={(e) => setEditName(e.target.value)}
-            className="w-full rounded-lg border border-stone-800 bg-stone-900 px-4 py-2.5 text-sm text-stone-100 outline-none transition-colors focus:border-gold-400/50"
+            onBlur={() => setTouchedName(true)}
+            className={inputClass(!!nameError)}
           />
+          {nameError && <p className="mt-1 text-xs text-red-400">{nameError}</p>}
         </div>
 
         <div>
@@ -66,8 +82,10 @@ export default function ProfileInfo({ user, editName, setEditName, editPhone, se
           <input
             value={editPhone}
             onChange={(e) => setEditPhone(e.target.value)}
-            className="w-full rounded-lg border border-stone-800 bg-stone-900 px-4 py-2.5 text-sm text-stone-100 outline-none transition-colors focus:border-gold-400/50"
+            onBlur={() => setTouchedPhone(true)}
+            className={inputClass(!!phoneError)}
           />
+          {phoneError && <p className="mt-1 text-xs text-red-400">{phoneError}</p>}
         </div>
 
         <div>
@@ -82,8 +100,13 @@ export default function ProfileInfo({ user, editName, setEditName, editPhone, se
 
         {hasChanges && (
           <button
-            onClick={onSave}
-            className="mt-2 w-full cursor-pointer rounded-lg bg-gold-400 px-6 py-2.5 text-sm font-semibold text-stone-950 transition-colors hover:bg-gold-300"
+            onClick={canSave ? onSave : undefined}
+            disabled={!canSave}
+            className={`mt-2 w-full rounded-lg px-6 py-2.5 text-sm font-semibold transition-colors ${
+              canSave
+                ? "cursor-pointer bg-gold-400 text-stone-950 hover:bg-gold-300"
+                : "cursor-not-allowed bg-stone-800/60 text-stone-600"
+            }`}
           >
             Salveaza modificarile
           </button>

@@ -7,64 +7,92 @@ interface AuthModalProps {
   onClose: () => void;
 }
 
+interface FieldErrors {
+  name?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
+}
+
+const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+const isValidPhone = (p: string) => /^\+?[0-9]{7,15}$/.test(p.replace(/\s/g, ""));
+
 export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [serverError, setServerError] = useState("");
+  const [touched, setTouched] = useState<Set<string>>(new Set());
   const { login, register } = useAuth();
 
   if (!open) return null;
 
-  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  const markTouched = (field: string) =>
+    setTouched((prev) => new Set(prev).add(field));
 
-  const isValidPhone = (p: string) => /^\+?[0-9]{7,15}$/.test(p.replace(/\s/g, ""));
+  const validate = (): FieldErrors => {
+    const errs: FieldErrors = {};
+
+    if (!email.trim()) errs.email = "Emailul este obligatoriu.";
+    else if (!isValidEmail(email)) errs.email = "Adresa de email nu este valida.";
+
+    if (!password.trim()) errs.password = "Parola este obligatorie.";
+    else if (!isLogin && password.length < 6) errs.password = "Minim 6 caractere.";
+
+    if (!isLogin) {
+      if (!name.trim()) errs.name = "Numele este obligatoriu.";
+      else if (name.trim().length < 2) errs.name = "Minim 2 caractere.";
+
+      if (!phone.trim()) errs.phone = "Telefonul este obligatoriu.";
+      else if (!isValidPhone(phone)) errs.phone = "Format invalid (ex: +373 60123456).";
+    }
+
+    return errs;
+  };
+
+  const fieldError = (field: keyof FieldErrors) =>
+    touched.has(field) ? validate()[field] : undefined;
 
   const handleSubmit = () => {
-    setError("");
+    setServerError("");
+    const errs = validate();
+    setTouched(new Set(["name", "email", "phone", "password"]));
 
-    if (!email.trim() || !password.trim()) {
-      setError("Completeaza email-ul si parola.");
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
       return;
     }
-
-    if (!isValidEmail(email)) {
-      setError("Introdu o adresa de email valida.");
-      return;
-    }
+    setErrors({});
 
     if (isLogin) {
       const err = login(email, password);
-      if (err) { setError(err); } else { resetAndClose(); }
+      if (err) setServerError(err);
+      else resetAndClose();
     } else {
-      if (!name.trim()) {
-        setError("Completeaza numele.");
-        return;
-      }
-      if (!phone.trim()) {
-        setError("Completeaza numarul de telefon.");
-        return;
-      }
-      if (!isValidPhone(phone)) {
-        setError("Introdu un numar de telefon valid (ex: +373 60123456).");
-        return;
-      }
-      if (password.length < 6) {
-        setError("Parola trebuie sa aiba minim 6 caractere.");
-        return;
-      }
       const err = register(name, email, phone, password);
-      if (err) { setError(err); } else { resetAndClose(); }
+      if (err) setServerError(err);
+      else resetAndClose();
     }
   };
 
   const resetAndClose = () => {
-    setName(""); setEmail(""); setPhone(""); setPassword(""); setError(""); onClose();
+    setName(""); setEmail(""); setPhone(""); setPassword("");
+    setErrors({}); setServerError(""); setTouched(new Set());
+    onClose();
   };
 
-  const switchMode = () => { setIsLogin(!isLogin); setError(""); };
+  const switchMode = () => {
+    setIsLogin(!isLogin);
+    setErrors({}); setServerError(""); setTouched(new Set());
+  };
+
+  const inputClass = (field: keyof FieldErrors) =>
+    `w-full rounded-lg border bg-stone-950/60 px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 outline-none transition-colors ${
+      fieldError(field) ? "border-red-500/60 focus:border-red-500" : "border-stone-800 focus:border-gold-400/50"
+    }`;
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
@@ -81,9 +109,9 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
           {isLogin ? "Intra in contul tau LUMINA." : "Creaza un cont nou."}
         </p>
 
-        {error && (
+        {serverError && (
           <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-sm text-red-400">
-            {error}
+            {serverError}
           </div>
         )}
 
@@ -93,7 +121,14 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
               <label className="mb-1.5 flex items-center gap-2 text-xs font-medium tracking-wide text-stone-400">
                 <User size={13} /> Nume Complet <span className="text-red-400">*</span>
               </label>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="ex: Adelina Lungu" className="w-full rounded-lg border border-stone-800 bg-stone-950/60 px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 outline-none transition-colors focus:border-gold-400/50" />
+              <input
+                type="text" value={name}
+                onChange={(e) => setName(e.target.value)}
+                onBlur={() => markTouched("name")}
+                placeholder="ex: Adelina Lungu"
+                className={inputClass("name")}
+              />
+              {fieldError("name") && <p className="mt-1 text-xs text-red-400">{fieldError("name")}</p>}
             </div>
           )}
 
@@ -101,7 +136,14 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
             <label className="mb-1.5 flex items-center gap-2 text-xs font-medium tracking-wide text-stone-400">
               <Mail size={13} /> Email <span className="text-red-400">*</span>
             </label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@exemplu.com" className="w-full rounded-lg border border-stone-800 bg-stone-950/60 px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 outline-none transition-colors focus:border-gold-400/50" />
+            <input
+              type="email" value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => markTouched("email")}
+              placeholder="email@exemplu.com"
+              className={inputClass("email")}
+            />
+            {fieldError("email") && <p className="mt-1 text-xs text-red-400">{fieldError("email")}</p>}
           </div>
 
           {!isLogin && (
@@ -109,7 +151,14 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
               <label className="mb-1.5 flex items-center gap-2 text-xs font-medium tracking-wide text-stone-400">
                 <Phone size={13} /> Telefon <span className="text-red-400">*</span>
               </label>
-              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+373 60 123 456" className="w-full rounded-lg border border-stone-800 bg-stone-950/60 px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 outline-none transition-colors focus:border-gold-400/50" />
+              <input
+                type="tel" value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                onBlur={() => markTouched("phone")}
+                placeholder="+373 60 123 456"
+                className={inputClass("phone")}
+              />
+              {fieldError("phone") && <p className="mt-1 text-xs text-red-400">{fieldError("phone")}</p>}
             </div>
           )}
 
@@ -117,10 +166,17 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
             <label className="mb-1.5 flex items-center gap-2 text-xs font-medium tracking-wide text-stone-400">
               <Lock size={13} /> Parola <span className="text-red-400">*</span>
             </label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="w-full rounded-lg border border-stone-800 bg-stone-950/60 px-4 py-2.5 text-sm text-stone-100 placeholder-stone-600 outline-none transition-colors focus:border-gold-400/50" />
-            {!isLogin && (
-              <p className="mt-1 text-xs text-stone-600">Minim 6 caractere</p>
-            )}
+            <input
+              type="password" value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onBlur={() => markTouched("password")}
+              placeholder="••••••••"
+              className={inputClass("password")}
+            />
+            {fieldError("password")
+              ? <p className="mt-1 text-xs text-red-400">{fieldError("password")}</p>
+              : !isLogin && <p className="mt-1 text-xs text-stone-600">Minim 6 caractere</p>
+            }
           </div>
 
           <button onClick={handleSubmit} className="mt-2 w-full cursor-pointer rounded-lg bg-gold-400 py-3.5 text-xs font-semibold tracking-widest uppercase text-stone-950 transition-all duration-300 hover:bg-gold-500">
