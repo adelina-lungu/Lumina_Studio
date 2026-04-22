@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, LogOut, MessageCircle, User } from "lucide-react";
+import { CalendarDays, ChevronDown, LogOut, MessageCircle, User } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { ROUTES } from "../constants";
 
@@ -47,10 +47,16 @@ export default function UserDropdown() {
               Profilul meu
             </button>
             {user.role === "admin" && (
-              <button onClick={() => { setOpen(false); navigate(ROUTES.adminSupport); }} className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm text-stone-400 transition-colors hover:bg-stone-800 hover:text-stone-100">
-                <MessageCircle size={15} />
-                Suport Chat
-              </button>
+              <>
+                <button onClick={() => { setOpen(false); navigate(ROUTES.adminBookings); }} className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm text-stone-400 transition-colors hover:bg-stone-800 hover:text-stone-100">
+                  <CalendarDays size={15} />
+                  Programari
+                </button>
+                <button onClick={() => { setOpen(false); navigate(ROUTES.adminSupport); }} className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm text-stone-400 transition-colors hover:bg-stone-800 hover:text-stone-100">
+                  <MessageCircle size={15} />
+                  Suport Chat
+                </button>
+              </>
             )}
             <button onClick={() => { logout(); setOpen(false); }} className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm text-stone-400 transition-colors hover:bg-red-500/10 hover:text-red-400">
               <LogOut size={15} />

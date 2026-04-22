@@ -10,6 +10,7 @@ export const ROUTES = {
   booking: "/booking",
   photographer: (id: string | number) => `/photographer/${id}`,
   profile: "/profile",
+  adminBookings: "/admin/bookings",
   adminSupport: "/admin/support",
   forbidden: "/403",
   serverError: "/500",

@@ -12,6 +12,7 @@ import ContactPage from "../pages/Contact/ContactPage";
 import BookingPage from "../pages/Booking/BookingPage";
 import PhotographerProfile from "../pages/Photographer/PhotographerPage";
 import ProfilePage from "../pages/Profile/ProfilePage";
+import AdminBookingsPage from "../pages/AdminBookings/AdminBookingsPage";
 import AdminSupport from "../pages/AdminSupport/AdminSupportPage";
 import NotFoundPage from "../errors/NotFoundPage";
 import ServerErrorPage from "../errors/ServerErrorPage";
@@ -37,6 +38,7 @@ export default function AppRouter() {
         <Route path={ROUTES.profile} element={<ProfilePage />} />
       </Route>
 
+      <Route path={ROUTES.adminBookings} element={<AdminBookingsPage />} />
       <Route path={ROUTES.adminSupport} element={<AdminSupport />} />
       <Route path={ROUTES.forbidden} element={<ForbiddenPage />} />
       <Route path={ROUTES.serverError} element={<ServerErrorPage />} />
