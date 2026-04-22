@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 import Booking from "./Booking";
-import type { ServicePackage } from "../data/mock";
+import type { ServicePackage } from "../types";
 
 interface BookingDrawerProps {
   open: boolean;

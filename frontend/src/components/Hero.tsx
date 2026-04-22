@@ -30,9 +30,14 @@ export default function Hero() {
         </p>
 
         <div className="mt-12 animate-fade-in-up opacity-0 delay-400">
-          <Link to={ROUTES.portfolio} className="group inline-flex items-center gap-3 border border-gold-400/40 bg-gold-400/10 px-8 py-4 text-sm font-medium tracking-widest uppercase text-gold-400 backdrop-blur-sm transition-all duration-300 hover:border-gold-400 hover:bg-gold-400/20">
-            Vezi Portofoliul
-            <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+          <Link
+            to={ROUTES.portfolio}
+            className="group relative inline-flex items-center gap-3 pb-2 text-sm font-medium tracking-[0.3em] uppercase text-gold-400 transition-colors duration-300 hover:text-gold-300"
+          >
+            <span>Vezi Portofoliul</span>
+            <ArrowRight size={16} className="transition-transform duration-500 ease-out group-hover:translate-x-2" />
+            <span className="absolute bottom-0 left-0 h-px w-full bg-gold-400/40" />
+            <span className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-gold-400 transition-transform duration-500 ease-out group-hover:scale-x-100" />
           </Link>
         </div>
       </div>
