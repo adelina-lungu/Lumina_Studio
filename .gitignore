@@ -1,29 +1,50 @@
+# === Node / Frontend ===
 node_modules/
 **/node_modules/
-
 dist/
 build/
 out/
 coverage/
+.vite/
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
+# === .NET / Backend ===
+**/bin/
+**/obj/
+*.user
+*.userosscache
+*.userprefs
+*.suo
+.vs/
+UpgradeLog.htm
+Backup/
+# EF Core local databases
+*.db
+*.db-shm
+*.db-wal
+
+# === Environment / secrets ===
 .env
 .env.local
 .env.development.local
 .env.production.local
+.env.test.local
 *.env
+**/appsettings.Development.json
+**/appsettings.Local.json
 
-npm-debug.log*
-yarn-debug.log*
-
+# === IDE / editors ===
 .idea/
 .vscode/
-*.suo
+*.swp
+*.swo
 *.ntvs*
 *.njsproj
-*.sln
-*.swp
 
+# === OS ===
 .DS_Store
 Thumbs.db
-
-**/appsettings.Development.json
