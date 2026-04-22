@@ -51,10 +51,22 @@ export default function Header({ onOpenBooking, onOpenAuth }: HeaderProps) {
               className="relative z-[70] flex h-12 w-12 cursor-pointer items-center justify-center"
               aria-label="Toggle menu"
             >
-              <div className="flex flex-col items-end gap-1.5">
-                <span className={`block h-[2px] bg-stone-100 transition-all duration-500 ${menuOpen ? "w-7 translate-y-[5px] rotate-45" : "w-7"}`} />
-                <span className={`block h-[2px] bg-gold-400 transition-all duration-300 ${menuOpen ? "w-0 opacity-0" : "w-5"}`} />
-                <span className={`block h-[2px] bg-stone-100 transition-all duration-500 ${menuOpen ? "w-7 -translate-y-[5px] -rotate-45" : "w-7"}`} />
+              <div className="relative h-4 w-7">
+                <span
+                  className={`absolute left-0 right-0 h-[1.5px] origin-center bg-stone-100 transition-all duration-300 ease-out ${
+                    menuOpen ? "top-1/2 -translate-y-1/2 rotate-45" : "top-0"
+                  }`}
+                />
+                <span
+                  className={`absolute right-0 top-1/2 h-[1.5px] -translate-y-1/2 bg-gold-400 transition-all duration-200 ease-out ${
+                    menuOpen ? "w-0 opacity-0" : "w-4 opacity-100"
+                  }`}
+                />
+                <span
+                  className={`absolute left-0 right-0 h-[1.5px] origin-center bg-stone-100 transition-all duration-300 ease-out ${
+                    menuOpen ? "top-1/2 -translate-y-1/2 -rotate-45" : "bottom-0"
+                  }`}
+                />
               </div>
             </button>
           </div>
