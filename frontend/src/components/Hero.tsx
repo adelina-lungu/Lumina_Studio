@@ -1,4 +1,6 @@
-import { ArrowDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ROUTES } from "../constants";
 
 export default function Hero() {
   return (
@@ -28,10 +30,10 @@ export default function Hero() {
         </p>
 
         <div className="mt-12 animate-fade-in-up opacity-0 delay-400">
-          <a href="#portfolio" className="group inline-flex items-center gap-3 border border-gold-400/40 bg-gold-400/10 px-8 py-4 text-sm font-medium tracking-widest uppercase text-gold-400 backdrop-blur-sm transition-all duration-300 hover:border-gold-400 hover:bg-gold-400/20">
+          <Link to={ROUTES.portfolio} className="group inline-flex items-center gap-3 border border-gold-400/40 bg-gold-400/10 px-8 py-4 text-sm font-medium tracking-widest uppercase text-gold-400 backdrop-blur-sm transition-all duration-300 hover:border-gold-400 hover:bg-gold-400/20">
             Vezi Portofoliul
-            <ArrowDown size={16} className="transition-transform duration-300 group-hover:translate-y-1" />
-          </a>
+            <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
 
