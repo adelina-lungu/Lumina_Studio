@@ -11,6 +11,7 @@ import TestimonialsPage from "../pages/Testimonials/TestimonialsPage";
 import ContactPage from "../pages/Contact/ContactPage";
 import BookingPage from "../pages/Booking/BookingPage";
 import PhotographerProfile from "../pages/Photographer/PhotographerPage";
+import ProfilePage from "../pages/Profile/ProfilePage";
 import AdminSupport from "../pages/AdminSupport/AdminSupportPage";
 import NotFoundPage from "../errors/NotFoundPage";
 import ServerErrorPage from "../errors/ServerErrorPage";
@@ -33,6 +34,7 @@ export default function AppRouter() {
         <Route path={ROUTES.contact} element={<ContactPage />} />
         <Route path={ROUTES.booking} element={<BookingPage />} />
         <Route path="/photographer/:id" element={<PhotographerProfile />} />
+        <Route path={ROUTES.profile} element={<ProfilePage />} />
       </Route>
 
       <Route path={ROUTES.adminSupport} element={<AdminSupport />} />

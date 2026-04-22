@@ -9,6 +9,7 @@ export const ROUTES = {
   contact: "/contact",
   booking: "/booking",
   photographer: (id: string | number) => `/photographer/${id}`,
+  profile: "/profile",
   adminSupport: "/admin/support",
   forbidden: "/403",
   serverError: "/500",

@@ -42,7 +42,7 @@ export default function UserDropdown() {
             )}
           </div>
           <div className="p-1.5">
-            <button onClick={() => setOpen(false)} className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm text-stone-400 transition-colors hover:bg-stone-800 hover:text-stone-100">
+            <button onClick={() => { setOpen(false); navigate(ROUTES.profile); }} className="flex w-full cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm text-stone-400 transition-colors hover:bg-stone-800 hover:text-stone-100">
               <User size={15} />
               Profilul meu
             </button>
