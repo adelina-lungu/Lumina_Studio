@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { ArrowRight, Clock, MapPin, Phone } from "lucide-react";
-import { BOOKING_LINK, MENU_LINKS } from "../constants";
+import { BOOKING_LINK, MENU_LINKS } from "../../constants";
 
 interface MenuOverlayProps {
   open: boolean;

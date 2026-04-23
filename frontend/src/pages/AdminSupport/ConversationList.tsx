@@ -1,7 +1,7 @@
 import { ArrowLeft, Inbox, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { ChatClient } from "./useAdminChat";
-import type { ChatMessage } from "../../components/ChatWidget";
+import type { ChatMessage } from "../../components/chat/ChatWidget";
 import { ROUTES } from "../../constants";
 
 interface Props {

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { MessageCircle } from "lucide-react";
-import { useChatSession } from "./chat/useChatSession";
-import ChatPanel from "./chat/ChatPanel";
+import { useChatSession } from "./useChatSession";
+import ChatPanel from "./ChatPanel";
 
-export type { ChatMessage } from "./chat/useChatSession";
+export type { ChatMessage } from "./useChatSession";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);

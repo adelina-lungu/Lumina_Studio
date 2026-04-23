@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ChatMessage } from "../../components/ChatWidget";
+import type { ChatMessage } from "../../components/chat/ChatWidget";
 
 export interface ChatClient {
   email: string;

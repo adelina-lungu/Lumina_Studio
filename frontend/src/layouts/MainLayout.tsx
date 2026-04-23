@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import BackToTop from "../components/BackToTop";
-import BookingDrawer from "../components/BookingDrawer";
-import AuthModal from "../components/AuthModal";
+import Header from "../components/layout/Header";
+import Footer from "../components/layout/Footer";
+import BackToTop from "../components/layout/BackToTop";
+import BookingDrawer from "../components/booking/BookingDrawer";
+import AuthModal from "../components/auth/AuthModal";
 import { useAuth } from "../contexts/AuthContext";
 import type { ServicePackage } from "../types";
 

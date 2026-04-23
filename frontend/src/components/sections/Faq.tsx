@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, Mail, HelpCircle } from "lucide-react";
-import { faqItems } from "../data/mock";
+import { faqItems } from "../../data/mock";
 
 export default function Faq() {
   const [openId, setOpenId] = useState<number | null>(null);

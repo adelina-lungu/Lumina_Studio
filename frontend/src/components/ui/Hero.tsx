@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ROUTES } from "../constants";
+import { ROUTES } from "../../constants";
 
 export default function Hero() {
   return (

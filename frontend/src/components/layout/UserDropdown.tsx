@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CalendarDays, ChevronDown, LogOut, MessageCircle, User } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
-import { ROUTES } from "../constants";
+import { useAuth } from "../../contexts/AuthContext";
+import { ROUTES } from "../../constants";
 
 const getInitials = (name: string) =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);

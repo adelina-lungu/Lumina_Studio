@@ -1,11 +1,11 @@
-import type { ServicePackage } from "../types";
+import type { ServicePackage } from "../../types";
 import BookingModal from "./BookingModal";
-import PhotographerStep from "./booking/PhotographerStep";
-import CalendarStep from "./booking/CalendarStep";
-import PackageStep from "./booking/PackageStep";
-import DetailsStep from "./booking/DetailsStep";
-import SummaryCard from "./booking/SummaryCard";
-import { useBookingFlow } from "./booking/useBookingFlow";
+import PhotographerStep from "./PhotographerStep";
+import CalendarStep from "./CalendarStep";
+import PackageStep from "./PackageStep";
+import DetailsStep from "./DetailsStep";
+import SummaryCard from "./SummaryCard";
+import { useBookingFlow } from "./useBookingFlow";
 
 interface BookingProps {
   preselectedPackage: ServicePackage | null;

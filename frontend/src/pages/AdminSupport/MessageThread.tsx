@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { ChatClient } from "./useAdminChat";
-import type { ChatMessage } from "../../components/ChatWidget";
+import type { ChatMessage } from "../../components/chat/ChatWidget";
 
 interface Props {
   client: ChatClient;

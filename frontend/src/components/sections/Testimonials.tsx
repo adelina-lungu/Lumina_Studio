@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { testimonials } from "../data/mock";
+import { testimonials } from "../../data/mock";
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);

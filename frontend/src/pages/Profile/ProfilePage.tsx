@@ -17,6 +17,7 @@ export default function ProfilePage() {
         editPhone={profile.editPhone}
         setEditPhone={profile.setEditPhone}
         hasChanges={profile.hasChanges}
+        saved={profile.saved}
         onSave={profile.save}
       />
       <div className="mx-auto w-full max-w-2xl px-6">

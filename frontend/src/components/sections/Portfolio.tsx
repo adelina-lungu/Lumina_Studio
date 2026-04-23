@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { portfolioImages } from "../data/mock";
-import type { PortfolioImage } from "../types";
+import { portfolioImages } from "../../data/mock";
+import type { PortfolioImage } from "../../types";
 
 const categories = [
   { key: "all", label: "Toate" },
