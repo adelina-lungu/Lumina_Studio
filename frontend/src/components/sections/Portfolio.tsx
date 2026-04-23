@@ -1,28 +1,29 @@
 import { useState } from "react";
-import { portfolioImages } from "../../data/mock";
-import type { PortfolioImage } from "../../types";
+import { portfolioApi } from "../../api";
+import { useFetch } from "../../hooks/useFetch";
+import type { PortfolioImageDto } from "../../api/types";
 
 const categories = [
   { key: "all", label: "Toate" },
-  { key: "fashion", label: "Fashion" },
-  { key: "wedding", label: "Nunți" },
-  { key: "portrait", label: "Portrete" },
+  { key: "Fashion", label: "Fashion" },
+  { key: "Wedding", label: "Nunți" },
+  { key: "Portrait", label: "Portrete" },
 ] as const;
 
 type Category = (typeof categories)[number]["key"];
 
 export default function Portfolio() {
   const [active, setActive] = useState<Category>("all");
+  const { data: images, loading } = useFetch(() => portfolioApi.list(), []);
 
   const filtered =
     active === "all"
-      ? portfolioImages
-      : portfolioImages.filter((img) => img.category === active);
+      ? images ?? []
+      : (images ?? []).filter((img) => img.category === active);
 
   return (
     <section id="portfolio" className="px-6 py-20 md:px-10 md:py-28">
       <div className="mx-auto w-full max-w-6xl">
-        {/* Heading */}
         <div className="mb-12 text-center md:mb-16">
           <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase text-gold-400">
             Lucrări Selectate
@@ -32,7 +33,6 @@ export default function Portfolio() {
           </h2>
         </div>
 
-        {/* Filter tabs */}
         <div className="mb-10 flex flex-wrap justify-center gap-2 md:mb-12">
           {categories.map((cat) => (
             <button
@@ -49,22 +49,31 @@ export default function Portfolio() {
           ))}
         </div>
 
-        {/* Masonry grid */}
-        <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-          {filtered.map((img) => (
-            <PortfolioCard key={img.id} image={img} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="mb-4 break-inside-avoid">
+                <div className={`animate-pulse bg-stone-800/50 ${i % 3 === 0 ? "aspect-[3/4]" : i % 3 === 1 ? "aspect-[4/3]" : "aspect-square"}`} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+            {filtered.map((img) => (
+              <PortfolioCard key={img.id} image={img} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-function PortfolioCard({ image }: { image: PortfolioImage }) {
+function PortfolioCard({ image }: { image: PortfolioImageDto }) {
   const aspectClass =
-    image.aspect === "tall"
+    image.aspect === "Tall"
       ? "aspect-[3/4]"
-      : image.aspect === "wide"
+      : image.aspect === "Wide"
         ? "aspect-[4/3]"
         : "aspect-square";
 
@@ -77,7 +86,6 @@ function PortfolioCard({ image }: { image: PortfolioImage }) {
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
-        {/* Hover overlay */}
         <div className="absolute inset-0 flex items-end bg-gradient-to-t from-stone-950/80 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100">
           <div className="p-5 sm:p-6">
             <p className="text-xs font-medium tracking-[0.2em] uppercase text-gold-400">
