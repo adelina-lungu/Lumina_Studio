@@ -7,21 +7,18 @@ import type {
 } from "./types";
 
 export const chatApi = {
-  myConversation: () =>
-    http.get<ChatConversationDto>("/chat/mine"),
+  startConversation: (email: string, name: string) =>
+    http.post<ChatConversationDto>(`/chat/start?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`),
 
-  sendMessage: (dto: SendChatMessageDto) =>
-    http.post<ChatMessageDto>("/chat/messages", dto),
+  sendMessage: (conversationId: number, dto: SendChatMessageDto) =>
+    http.post<ChatMessageDto>(`/chat/${conversationId}/messages`, dto),
 
   listConversations: () =>
-    http.get<ChatConversationDto[]>("/chat/conversations"),
+    http.get<ChatConversationDto[]>("/chat"),
 
   getConversation: (id: number) =>
-    http.get<ChatConversationDto>(`/chat/conversations/${id}`),
-
-  replyToConversation: (id: number, dto: SendChatMessageDto) =>
-    http.post<ChatMessageDto>(`/chat/conversations/${id}/messages`, dto),
+    http.get<ChatConversationDto>(`/chat/${id}`),
 
   markRead: (conversationId: number) =>
-    http.patch<ActionResponse>(`/chat/conversations/${conversationId}/read`),
+    http.post<ActionResponse>(`/chat/${conversationId}/read`),
 };

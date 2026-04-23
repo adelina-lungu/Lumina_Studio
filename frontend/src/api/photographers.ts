@@ -2,7 +2,6 @@ import { http } from "./client";
 import type {
   PhotographerDto,
   SetAvailabilityDto,
-  AvailabilityDto,
   ActionResponse,
 } from "./types";
 
@@ -10,11 +9,11 @@ export const photographersApi = {
   list: () =>
     http.get<PhotographerDto[]>("/photographers"),
 
-  getBySlug: (slug: string) =>
-    http.get<PhotographerDto>(`/photographers/${slug}`),
+  getById: (id: number) =>
+    http.get<PhotographerDto>(`/photographers/${id}`),
 
-  getAvailability: (id: number, month: string) =>
-    http.get<AvailabilityDto[]>(`/photographers/${id}/availability?month=${month}`),
+  getBySlug: (slug: string) =>
+    http.get<PhotographerDto>(`/photographers/slug/${slug}`),
 
   setAvailability: (dto: SetAvailabilityDto) =>
     http.post<ActionResponse>("/photographers/availability", dto),

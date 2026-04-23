@@ -33,11 +33,14 @@ export const bookingsApi = {
     http.post<BookingDto>("/bookings", dto),
 
   cancel: (id: number) =>
-    http.patch<ActionResponse>(`/bookings/${id}/cancel`),
+    http.post<ActionResponse>(`/bookings/${id}/cancel`),
 
   confirm: (id: number) =>
-    http.patch<ActionResponse>(`/bookings/${id}/confirm`),
+    http.post<ActionResponse>(`/bookings/${id}/confirm`),
+
+  complete: (id: number) =>
+    http.post<ActionResponse>(`/bookings/${id}/complete`),
 
   myBookings: () =>
-    http.get<BookingDto[]>("/bookings/mine"),
+    http.get<BookingDto[]>("/bookings/my"),
 };

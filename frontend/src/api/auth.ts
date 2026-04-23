@@ -25,8 +25,8 @@ export const authApi = {
     setToken(null);
   },
 
-  me: () => http.get<UserDto>("/auth/me"),
+  me: () => http.get<UserDto>("/users/my"),
 
-  updateProfile: (dto: UpdateUserProfileDto) =>
-    http.put<ActionResponse>("/auth/profile", dto),
+  updateProfile: (id: number, dto: UpdateUserProfileDto) =>
+    http.put<ActionResponse>(`/users/${id}/profile`, dto),
 };

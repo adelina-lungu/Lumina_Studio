@@ -13,8 +13,8 @@ export const contactApi = {
     http.get<ContactMessageDto[]>("/contact"),
 
   markRead: (id: number) =>
-    http.patch<ActionResponse>(`/contact/${id}/read`),
+    http.post<ActionResponse>(`/contact/${id}/read`),
 
   markResolved: (id: number) =>
-    http.patch<ActionResponse>(`/contact/${id}/resolve`),
+    http.post<ActionResponse>(`/contact/${id}/resolve`),
 };
