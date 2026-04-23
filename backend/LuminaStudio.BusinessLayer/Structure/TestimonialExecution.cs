@@ -1,21 +1,32 @@
 using AutoMapper;
+using LuminaStudio.BusinessLayer.Core;
 using LuminaStudio.BusinessLayer.Interfaces;
 using LuminaStudio.Domain.Models.Responses;
 using LuminaStudio.Domain.Models.Testimonial;
 
 namespace LuminaStudio.BusinessLayer.Structure;
 
-public class TestimonialExecution : ITestimonialActions
+public class TestimonialExecution : TestimonialActions, ITestimonialActions
 {
-    private readonly IMapper _mapper;
+    public TestimonialExecution(IMapper mapper) : base(mapper) {}
 
-    public TestimonialExecution(IMapper mapper)
+    public List<TestimonialDto> GetAll(bool approvedOnly = false)
     {
-        _mapper = mapper;
+        return GetAllExecution(approvedOnly);
     }
 
-    public List<TestimonialDto> GetAll(bool approvedOnly = false) => throw new NotImplementedException();
-    public ActionResponse Create(CreateTestimonialDto dto) => throw new NotImplementedException();
-    public ActionResponse Approve(int id) => throw new NotImplementedException();
-    public ActionResponse Delete(int id) => throw new NotImplementedException();
+    public ActionResponse Create(CreateTestimonialDto dto)
+    {
+        return CreateExecution(dto);
+    }
+
+    public ActionResponse Approve(int id)
+    {
+        return ApproveExecution(id);
+    }
+
+    public ActionResponse Delete(int id)
+    {
+        return DeleteExecution(id);
+    }
 }
