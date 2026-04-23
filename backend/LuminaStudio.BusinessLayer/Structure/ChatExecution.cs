@@ -1,22 +1,37 @@
 using AutoMapper;
+using LuminaStudio.BusinessLayer.Core;
 using LuminaStudio.BusinessLayer.Interfaces;
 using LuminaStudio.Domain.Models.Chat;
 using LuminaStudio.Domain.Models.Responses;
 
 namespace LuminaStudio.BusinessLayer.Structure;
 
-public class ChatExecution : IChatActions
+public class ChatExecution : ChatActions, IChatActions
 {
-    private readonly IMapper _mapper;
+    public ChatExecution(IMapper mapper) : base(mapper) {}
 
-    public ChatExecution(IMapper mapper)
+    public ChatConversationDto? GetConversationById(int id)
     {
-        _mapper = mapper;
+        return GetConversationByIdExecution(id);
     }
 
-    public ChatConversationDto? GetConversationById(int id) => throw new NotImplementedException();
-    public List<ChatConversationDto> GetAll() => throw new NotImplementedException();
-    public ChatConversationDto? GetOrCreateByEmail(string clientEmail, string clientName, int? userId) => throw new NotImplementedException();
-    public ActionResponse SendMessage(int conversationId, SendChatMessageDto dto, string senderName, bool isStudio) => throw new NotImplementedException();
-    public ActionResponse MarkAsRead(int conversationId) => throw new NotImplementedException();
+    public List<ChatConversationDto> GetAll()
+    {
+        return GetAllExecution();
+    }
+
+    public ChatConversationDto? GetOrCreateByEmail(string clientEmail, string clientName, int? userId)
+    {
+        return GetOrCreateByEmailExecution(clientEmail, clientName, userId);
+    }
+
+    public ActionResponse SendMessage(int conversationId, SendChatMessageDto dto, string senderName, bool isStudio)
+    {
+        return SendMessageExecution(conversationId, dto, senderName, isStudio);
+    }
+
+    public ActionResponse MarkAsRead(int conversationId)
+    {
+        return MarkAsReadExecution(conversationId);
+    }
 }

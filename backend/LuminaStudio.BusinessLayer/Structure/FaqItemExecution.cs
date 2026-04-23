@@ -1,21 +1,32 @@
 using AutoMapper;
+using LuminaStudio.BusinessLayer.Core;
 using LuminaStudio.BusinessLayer.Interfaces;
 using LuminaStudio.Domain.Models.FaqItem;
 using LuminaStudio.Domain.Models.Responses;
 
 namespace LuminaStudio.BusinessLayer.Structure;
 
-public class FaqItemExecution : IFaqItemActions
+public class FaqItemExecution : FaqItemActions, IFaqItemActions
 {
-    private readonly IMapper _mapper;
+    public FaqItemExecution(IMapper mapper) : base(mapper) {}
 
-    public FaqItemExecution(IMapper mapper)
+    public List<FaqItemDto> GetAll(bool activeOnly = false)
     {
-        _mapper = mapper;
+        return GetAllExecution(activeOnly);
     }
 
-    public List<FaqItemDto> GetAll(bool activeOnly = false) => throw new NotImplementedException();
-    public ActionResponse Create(CreateFaqItemDto dto) => throw new NotImplementedException();
-    public ActionResponse Update(int id, UpdateFaqItemDto dto) => throw new NotImplementedException();
-    public ActionResponse Delete(int id) => throw new NotImplementedException();
+    public ActionResponse Create(CreateFaqItemDto dto)
+    {
+        return CreateExecution(dto);
+    }
+
+    public ActionResponse Update(int id, UpdateFaqItemDto dto)
+    {
+        return UpdateExecution(id, dto);
+    }
+
+    public ActionResponse Delete(int id)
+    {
+        return DeleteExecution(id);
+    }
 }

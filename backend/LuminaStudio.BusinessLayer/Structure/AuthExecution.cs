@@ -1,26 +1,22 @@
 using AutoMapper;
+using LuminaStudio.BusinessLayer.Core;
 using LuminaStudio.BusinessLayer.Interfaces;
 using LuminaStudio.Domain.Models.Auth;
 using LuminaStudio.Domain.Models.Responses;
 
 namespace LuminaStudio.BusinessLayer.Structure;
 
-public class AuthExecution : IAuthActions
+public class AuthExecution : AuthActions, IAuthActions
 {
-    private readonly IMapper _mapper;
-
-    public AuthExecution(IMapper mapper)
-    {
-        _mapper = mapper;
-    }
+    public AuthExecution(IMapper mapper) : base(mapper) {}
 
     public ActionResponse Register(UserRegisterDto dto)
     {
-        throw new NotImplementedException();
+        return RegisterExecution(dto);
     }
 
     public (LoginResponseDto? Data, string? Error) Login(UserLoginDto dto)
     {
-        throw new NotImplementedException();
+        return LoginExecution(dto);
     }
 }

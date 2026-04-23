@@ -1,21 +1,32 @@
 using AutoMapper;
+using LuminaStudio.BusinessLayer.Core;
 using LuminaStudio.BusinessLayer.Interfaces;
 using LuminaStudio.Domain.Models.ContactMessage;
 using LuminaStudio.Domain.Models.Responses;
 
 namespace LuminaStudio.BusinessLayer.Structure;
 
-public class ContactMessageExecution : IContactMessageActions
+public class ContactMessageExecution : ContactMessageActions, IContactMessageActions
 {
-    private readonly IMapper _mapper;
+    public ContactMessageExecution(IMapper mapper) : base(mapper) {}
 
-    public ContactMessageExecution(IMapper mapper)
+    public List<ContactMessageDto> GetAll()
     {
-        _mapper = mapper;
+        return GetAllExecution();
     }
 
-    public List<ContactMessageDto> GetAll() => throw new NotImplementedException();
-    public ActionResponse Create(CreateContactMessageDto dto, int? userId) => throw new NotImplementedException();
-    public ActionResponse MarkAsRead(int id) => throw new NotImplementedException();
-    public ActionResponse MarkAsResolved(int id) => throw new NotImplementedException();
+    public ActionResponse Create(CreateContactMessageDto dto, int? userId)
+    {
+        return CreateExecution(dto, userId);
+    }
+
+    public ActionResponse MarkAsRead(int id)
+    {
+        return MarkAsReadExecution(id);
+    }
+
+    public ActionResponse MarkAsResolved(int id)
+    {
+        return MarkAsResolvedExecution(id);
+    }
 }
