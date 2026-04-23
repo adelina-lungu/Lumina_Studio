@@ -1,4 +1,5 @@
 using AutoMapper;
+using LuminaStudio.BusinessLayer.Core;
 using LuminaStudio.BusinessLayer.Interfaces;
 using LuminaStudio.Domain.Enums;
 using LuminaStudio.Domain.Models.Responses;
@@ -6,20 +7,42 @@ using LuminaStudio.Domain.Models.User;
 
 namespace LuminaStudio.BusinessLayer.Structure;
 
-public class UserExecution : IUserActions
+public class UserExecution : UserActions, IUserActions
 {
-    private readonly IMapper _mapper;
+    public UserExecution(IMapper mapper) : base(mapper) {}
 
-    public UserExecution(IMapper mapper)
+    public UserDto? GetById(int id)
     {
-        _mapper = mapper;
+        return GetByIdExecution(id);
     }
 
-    public UserDto? GetById(int id) => throw new NotImplementedException();
-    public List<UserDto> GetAll() => throw new NotImplementedException();
-    public ActionResponse UpdateProfile(int id, UpdateUserProfileDto dto) => throw new NotImplementedException();
-    public ActionResponse Ban(int id, int currentUserId, UserRole currentUserRole) => throw new NotImplementedException();
-    public ActionResponse Unban(int id, int currentUserId, UserRole currentUserRole) => throw new NotImplementedException();
-    public ActionResponse Promote(int id, int currentUserId, UserRole currentUserRole) => throw new NotImplementedException();
-    public ActionResponse Demote(int id, int currentUserId, UserRole currentUserRole) => throw new NotImplementedException();
+    public List<UserDto> GetAll()
+    {
+        return GetAllExecution();
+    }
+
+    public ActionResponse UpdateProfile(int id, UpdateUserProfileDto dto)
+    {
+        return UpdateProfileExecution(id, dto);
+    }
+
+    public ActionResponse Ban(int id, int currentUserId, UserRole currentUserRole)
+    {
+        return BanExecution(id, currentUserId, currentUserRole);
+    }
+
+    public ActionResponse Unban(int id, int currentUserId, UserRole currentUserRole)
+    {
+        return UnbanExecution(id, currentUserId, currentUserRole);
+    }
+
+    public ActionResponse Promote(int id, int currentUserId, UserRole currentUserRole)
+    {
+        return PromoteExecution(id, currentUserId, currentUserRole);
+    }
+
+    public ActionResponse Demote(int id, int currentUserId, UserRole currentUserRole)
+    {
+        return DemoteExecution(id, currentUserId, currentUserRole);
+    }
 }

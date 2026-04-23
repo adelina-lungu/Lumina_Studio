@@ -1,24 +1,47 @@
 using AutoMapper;
+using LuminaStudio.BusinessLayer.Core;
 using LuminaStudio.BusinessLayer.Interfaces;
 using LuminaStudio.Domain.Models.Booking;
 using LuminaStudio.Domain.Models.Responses;
 
 namespace LuminaStudio.BusinessLayer.Structure;
 
-public class BookingExecution : IBookingActions
+public class BookingExecution : BookingActions, IBookingActions
 {
-    private readonly IMapper _mapper;
+    public BookingExecution(IMapper mapper) : base(mapper) {}
 
-    public BookingExecution(IMapper mapper)
+    public BookingDto? GetById(int id)
     {
-        _mapper = mapper;
+        return GetByIdExecution(id);
     }
 
-    public BookingDto? GetById(int id) => throw new NotImplementedException();
-    public List<BookingDto> GetByUserId(int userId) => throw new NotImplementedException();
-    public BookingPageDto GetAll(BookingFilterDto filter) => throw new NotImplementedException();
-    public ActionResponse Create(CreateBookingDto dto, int userId) => throw new NotImplementedException();
-    public ActionResponse Cancel(int id, int userId) => throw new NotImplementedException();
-    public ActionResponse Confirm(int id) => throw new NotImplementedException();
-    public ActionResponse Complete(int id) => throw new NotImplementedException();
+    public List<BookingDto> GetByUserId(int userId)
+    {
+        return GetByUserIdExecution(userId);
+    }
+
+    public BookingPageDto GetAll(BookingFilterDto filter)
+    {
+        return GetAllExecution(filter);
+    }
+
+    public ActionResponse Create(CreateBookingDto dto, int userId)
+    {
+        return CreateExecution(dto, userId);
+    }
+
+    public ActionResponse Cancel(int id, int userId)
+    {
+        return CancelExecution(id, userId);
+    }
+
+    public ActionResponse Confirm(int id)
+    {
+        return ConfirmExecution(id);
+    }
+
+    public ActionResponse Complete(int id)
+    {
+        return CompleteExecution(id);
+    }
 }

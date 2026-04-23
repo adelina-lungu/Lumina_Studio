@@ -1,23 +1,42 @@
 using AutoMapper;
+using LuminaStudio.BusinessLayer.Core;
 using LuminaStudio.BusinessLayer.Interfaces;
 using LuminaStudio.Domain.Models.Photographer;
 using LuminaStudio.Domain.Models.Responses;
 
 namespace LuminaStudio.BusinessLayer.Structure;
 
-public class PhotographerExecution : IPhotographerActions
+public class PhotographerExecution : PhotographerActions, IPhotographerActions
 {
-    private readonly IMapper _mapper;
+    public PhotographerExecution(IMapper mapper) : base(mapper) {}
 
-    public PhotographerExecution(IMapper mapper)
+    public PhotographerDto? GetById(int id)
     {
-        _mapper = mapper;
+        return GetByIdExecution(id);
     }
 
-    public PhotographerDto? GetById(int id) => throw new NotImplementedException();
-    public PhotographerDto? GetBySlug(string slug) => throw new NotImplementedException();
-    public List<PhotographerDto> GetAll() => throw new NotImplementedException();
-    public ActionResponse Update(int id, UpdatePhotographerDto dto) => throw new NotImplementedException();
-    public ActionResponse SetAvailability(SetAvailabilityDto dto) => throw new NotImplementedException();
-    public ActionResponse RemoveAvailability(int photographerId, DateTime date) => throw new NotImplementedException();
+    public PhotographerDto? GetBySlug(string slug)
+    {
+        return GetBySlugExecution(slug);
+    }
+
+    public List<PhotographerDto> GetAll()
+    {
+        return GetAllExecution();
+    }
+
+    public ActionResponse Update(int id, UpdatePhotographerDto dto)
+    {
+        return UpdateExecution(id, dto);
+    }
+
+    public ActionResponse SetAvailability(SetAvailabilityDto dto)
+    {
+        return SetAvailabilityExecution(dto);
+    }
+
+    public ActionResponse RemoveAvailability(int photographerId, DateTime date)
+    {
+        return RemoveAvailabilityExecution(photographerId, date);
+    }
 }
