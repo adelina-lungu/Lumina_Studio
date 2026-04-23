@@ -1,6 +1,6 @@
 import { useOutletContext } from "react-router-dom";
-import Hero from "../../components/Hero";
-import CtaBanner from "../../components/CtaBanner";
+import Hero from "../../components/ui/Hero";
+import CtaBanner from "../../components/ui/CtaBanner";
 import PortfolioTeaser from "./sections/PortfolioTeaser";
 import ServicesTeaser from "./sections/ServicesTeaser";
 import TeamTeaser from "./sections/TeamTeaser";

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Calendar, Lock } from "lucide-react";
-import { useAvailability } from "./availability/useAvailability";
-import CalendarGrid from "./availability/CalendarGrid";
-import NotificationBell from "./availability/NotificationBell";
-import ConfirmBookingModal from "./availability/ConfirmBookingModal";
+import { useAvailability } from "./useAvailability";
+import CalendarGrid from "./CalendarGrid";
+import NotificationBell from "./NotificationBell";
+import ConfirmBookingModal from "./ConfirmBookingModal";
 
 interface AvailabilityCalendarProps {
   photographerId: string;

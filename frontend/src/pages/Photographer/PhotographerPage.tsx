@@ -1,6 +1,6 @@
 import { useParams, Navigate } from "react-router-dom";
 import { photographers, portfolioImages, teamMembers } from "../../data/mock";
-import AvailabilityCalendar from "../../components/AvailabilityCalendar";
+import AvailabilityCalendar from "../../components/availability/AvailabilityCalendar";
 import ProfileHeader from "./ProfileHeader";
 import PortfolioGallery from "./PortfolioGallery";
 import OtherPhotographers from "./OtherPhotographers";

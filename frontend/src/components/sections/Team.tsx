@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { teamMembers } from "../data/mock";
+import { teamMembers } from "../../data/mock";
 
 export default function Team() {
   const navigate = useNavigate();

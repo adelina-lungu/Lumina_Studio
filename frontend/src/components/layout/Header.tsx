@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { LogIn } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
-import { ROUTES } from "../constants";
+import { useAuth } from "../../contexts/AuthContext";
+import { ROUTES } from "../../constants";
 import MenuOverlay from "./MenuOverlay";
 import UserDropdown from "./UserDropdown";
 

@@ -1,6 +1,6 @@
 import { Check, Sparkles } from "lucide-react";
-import { servicePackages } from "../data/mock";
-import type { ServicePackage } from "../types";
+import { servicePackages } from "../../data/mock";
+import type { ServicePackage } from "../../types";
 
 interface ServicesProps {
   onSelectPackage: (pkg: ServicePackage) => void;
