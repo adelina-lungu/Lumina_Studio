@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 import { authApi } from "../api/auth";
-import { setToken } from "../api/client";
+import { ApiError, setToken } from "../api/client";
+import type { UserRole as ApiRole } from "../api/types";
 
 export type UserRole = "admin" | "client";
 
@@ -19,26 +20,38 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<string | null>;
   register: (name: string, email: string, phone: string, password: string) => Promise<string | null>;
   logout: () => void;
-  updateUser: (fields: Partial<Pick<User, "name" | "phone">>) => void;
+  updateUser: (fields: Partial<Pick<User, "name" | "phone">>) => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const ADMIN_EMAILS = ["alex@lumina.md", "maria@lumina.md", "victor@lumina.md"];
-const TOKEN_KEY = "lumina_token";
 const USER_KEY = "lumina_user";
-const USERS_KEY = "lumina_users";
 
-type StoredUser = { id: number; name: string; email: string; phone: string; password: string; role: UserRole };
-
-let nextId = 100;
-
-function mockUsers(): StoredUser[] {
-  return JSON.parse(localStorage.getItem(USERS_KEY) || "[]");
+function mapRole(apiRole: ApiRole): UserRole {
+  return apiRole === "Admin" || apiRole === "Owner" ? "admin" : "client";
 }
 
-function saveUser(user: User) {
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+function toUser(dto: { id: number; name: string; email: string; phone: string; role: ApiRole }): User {
+  return { id: dto.id, name: dto.name, email: dto.email, phone: dto.phone, role: mapRole(dto.role) };
+}
+
+function cacheUser(u: User) {
+  localStorage.setItem(USER_KEY, JSON.stringify(u));
+}
+
+function extractError(err: unknown): string {
+  if (err instanceof ApiError) {
+    if (typeof err.body === "object" && err.body && "message" in err.body) {
+      return (err.body as { message: string }).message;
+    }
+    if (err.status === 401) return "Email sau parola incorecta.";
+    if (err.status === 409) return "Acest email este deja inregistrat.";
+    return `Eroare ${err.status}`;
+  }
+  if (err instanceof TypeError && err.message === "Failed to fetch") {
+    return "Nu s-a putut conecta la server.";
+  }
+  return "A aparut o eroare neasteptata.";
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -47,32 +60,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const restore = async () => {
-      const token = localStorage.getItem(TOKEN_KEY);
+      const token = localStorage.getItem("lumina_token");
       if (token) {
         try {
           const dto = await authApi.me();
-          const restored: User = {
-            id: dto.id,
-            name: dto.name,
-            email: dto.email,
-            phone: dto.phone,
-            role: dto.role === "Admin" || dto.role === "Owner" ? "admin" : "client",
-          };
-          setUser(restored);
+          const u = toUser(dto);
+          setUser(u);
+          cacheUser(u);
           setLoading(false);
           return;
         } catch {
-          // backend not available — fall through to localStorage
-        }
-      }
-
-      const saved = localStorage.getItem(USER_KEY);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (!parsed.id) parsed.id = 0;
-          setUser(parsed);
-        } catch {
+          setToken(null);
           localStorage.removeItem(USER_KEY);
         }
       }
@@ -84,59 +82,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string): Promise<string | null> => {
     try {
       const res = await authApi.login({ email, password });
-      const loggedUser: User = {
-        id: res.user.id,
-        name: res.user.name,
-        email: res.user.email,
-        phone: res.user.phone,
-        role: res.user.role === "Admin" || res.user.role === "Owner" ? "admin" : "client",
-      };
-      setUser(loggedUser);
-      saveUser(loggedUser);
+      const u = toUser(res.user);
+      setUser(u);
+      cacheUser(u);
       return null;
-    } catch {
-      // backend not available — fallback to localStorage mock
+    } catch (err) {
+      return extractError(err);
     }
-
-    const users = mockUsers();
-    const found = users.find((u) => u.email === email && u.password === password);
-    if (!found) return "Email sau parola incorecta.";
-
-    const loggedUser: User = { id: found.id, name: found.name, email: found.email, phone: found.phone, role: found.role };
-    setUser(loggedUser);
-    saveUser(loggedUser);
-    return null;
   }, []);
 
   const register = useCallback(async (name: string, email: string, phone: string, password: string): Promise<string | null> => {
     try {
       const res = await authApi.register({ name, email, phone, password });
-      const newUser: User = {
-        id: res.user.id,
-        name: res.user.name,
-        email: res.user.email,
-        phone: res.user.phone,
-        role: res.user.role === "Admin" || res.user.role === "Owner" ? "admin" : "client",
-      };
-      setUser(newUser);
-      saveUser(newUser);
+      const u = toUser(res.user);
+      setUser(u);
+      cacheUser(u);
       return null;
-    } catch {
-      // backend not available — fallback to localStorage mock
+    } catch (err) {
+      return extractError(err);
     }
-
-    const users = mockUsers();
-    if (users.some((u) => u.email === email)) return "Acest email este deja inregistrat.";
-
-    const role: UserRole = ADMIN_EMAILS.includes(email) ? "admin" : "client";
-    const id = nextId++;
-    users.push({ id, name, email, phone, password, role });
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-
-    const newUser: User = { id, name, email, phone, role };
-    setUser(newUser);
-    saveUser(newUser);
-    return null;
   }, []);
 
   const logout = useCallback(() => {
@@ -145,23 +109,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(USER_KEY);
   }, []);
 
-  const updateUser = useCallback((fields: Partial<Pick<User, "name" | "phone">>) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      const updated = { ...prev, ...fields };
-      saveUser(updated);
-
-      const users = mockUsers();
-      const idx = users.findIndex((u) => u.email === prev.email);
-      if (idx !== -1) {
-        if (fields.name) users[idx].name = fields.name;
-        if (fields.phone) users[idx].phone = fields.phone;
-        localStorage.setItem(USERS_KEY, JSON.stringify(users));
-      }
-
-      return updated;
-    });
-  }, []);
+  const updateUser = useCallback(async (fields: Partial<Pick<User, "name" | "phone">>): Promise<string | null> => {
+    if (!user) return "Nu esti autentificat.";
+    try {
+      const dto = { name: fields.name ?? user.name, phone: fields.phone ?? user.phone };
+      await authApi.updateProfile(user.id, dto);
+      const updated = { ...user, ...fields };
+      setUser(updated);
+      cacheUser(updated);
+      return null;
+    } catch (err) {
+      return extractError(err);
+    }
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser }}>
