@@ -56,7 +56,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const fieldError = (field: keyof FieldErrors) =>
     touched.has(field) ? validate()[field] : undefined;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setServerError("");
     const errs = validate();
     setTouched(new Set(["name", "email", "phone", "password"]));
@@ -68,11 +68,11 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     setErrors({});
 
     if (isLogin) {
-      const err = login(email, password);
+      const err = await login(email, password);
       if (err) setServerError(err);
       else resetAndClose();
     } else {
-      const err = register(name, email, phone, password);
+      const err = await register(name, email, phone, password);
       if (err) setServerError(err);
       else resetAndClose();
     }
