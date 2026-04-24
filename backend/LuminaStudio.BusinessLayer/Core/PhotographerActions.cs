@@ -138,6 +138,8 @@ namespace LuminaStudio.BusinessLayer.Core
         {
             using var context = new AppDbContext();
 
+            dto.Date = DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc);
+
             var photographer = context.Photographers.FirstOrDefault(p => p.Id == dto.PhotographerId);
             if (photographer == null)
                 return ActionResponse.Fail("Photographer not found.");
@@ -185,6 +187,8 @@ namespace LuminaStudio.BusinessLayer.Core
         protected ActionResponse RemoveAvailabilityExecution(int photographerId, DateTime date)
         {
             using var context = new AppDbContext();
+
+            date = DateTime.SpecifyKind(date, DateTimeKind.Utc);
 
             var availability = context.PhotographerAvailability
                 .FirstOrDefault(a => a.PhotographerId == photographerId && a.Date == date && a.BookingId == null);

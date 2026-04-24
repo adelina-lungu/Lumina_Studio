@@ -20,9 +20,6 @@ export const photographersApi = {
   getBySlug: (slug: string) =>
     http.get<PhotographerDto>(`/photographers/slug/${slug}`),
 
-  update: (id: number, dto: UpdatePhotographerDto) =>
-    http.put<ActionResponse>(`/photographers/${id}`, dto),
-
   create: (dto: CreatePhotographerDto) =>
     http.post<ActionResponse>("/photographers", dto),
 

@@ -62,10 +62,16 @@ namespace LuminaStudio.BusinessLayer.Core
                 query = query.Where(b => b.Status == filter.Status.Value);
 
             if (filter.DateFrom.HasValue)
-                query = query.Where(b => b.Date >= filter.DateFrom.Value);
+            {
+                var dateFrom = DateTime.SpecifyKind(filter.DateFrom.Value, DateTimeKind.Utc);
+                query = query.Where(b => b.Date >= dateFrom);
+            }
 
             if (filter.DateTo.HasValue)
-                query = query.Where(b => b.Date <= filter.DateTo.Value);
+            {
+                var dateTo = DateTime.SpecifyKind(filter.DateTo.Value, DateTimeKind.Utc);
+                query = query.Where(b => b.Date <= dateTo);
+            }
 
             if (!string.IsNullOrWhiteSpace(filter.Search))
             {
@@ -101,6 +107,8 @@ namespace LuminaStudio.BusinessLayer.Core
         protected ActionResponse CreateExecution(CreateBookingDto dto, int userId)
         {
             using var context = new AppDbContext();
+
+            dto.Date = DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc);
 
             var photographer = context.Photographers.FirstOrDefault(p => p.Id == dto.PhotographerId);
             if (photographer == null)
