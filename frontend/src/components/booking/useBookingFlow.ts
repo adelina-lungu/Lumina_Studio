@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { photographers } from "../../data/mock";
-import type { Photographer, ServicePackage } from "../../types";
+import type { Photographer } from "../../types";
+import type { ServicePackageDtoDto } from "../../api/types";
 
-export function useBookingFlow(preselectedPackage: ServicePackage | null) {
+export function useBookingFlow(preselectedPackage: ServicePackageDtoDto | null) {
   const [selectedPhotographer, setSelectedPhotographer] = useState<Photographer>(photographers[0]);
   const [selectedDate, setSelectedDate] = useState("");
-  const [selectedPackage, setSelectedPackage] = useState<ServicePackage | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<ServicePackageDto | null>(null);
   const [peopleCount, setPeopleCount] = useState(1);
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");

@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import type { TeamMember } from "../../types";
-import { ROUTES } from "../../constants";
+import type { PhotographerDto } from "../../api/types";
 
 interface Props {
-  members: TeamMember[];
+  members: PhotographerDto[];
 }
 
 export default function OtherPhotographers({ members }: Props) {
@@ -21,15 +20,15 @@ export default function OtherPhotographers({ members }: Props) {
           {members.map((m) => (
             <button
               key={m.id}
-              onClick={() => navigate(ROUTES.photographer(m.id))}
+              onClick={() => navigate(`/photographer/${m.slug}`)}
               className="group flex cursor-pointer flex-col items-center gap-3 transition-all duration-500"
             >
               <div className="h-24 w-24 overflow-hidden rounded-full border-2 border-stone-700 transition-all duration-500 group-hover:border-gold-400 sm:h-28 sm:w-28">
-                <img src={m.avatar} alt={m.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <img src={m.avatarUrl} alt={m.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
               </div>
               <div className="text-center">
                 <p className="text-sm font-semibold text-stone-100 transition-colors group-hover:text-gold-400">{m.name}</p>
-                <p className="text-[11px] tracking-wide text-stone-500">{m.role}</p>
+                <p className="text-[11px] tracking-wide text-stone-500">{m.specialty}</p>
               </div>
             </button>
           ))}

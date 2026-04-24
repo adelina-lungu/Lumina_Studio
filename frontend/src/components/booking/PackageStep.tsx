@@ -1,21 +1,25 @@
 import { Package, Users } from "lucide-react";
-import { servicePackages } from "../../data/mock";
-import type { ServicePackage } from "../../types";
+import { packagesApi } from "../../api";
+import { useFetch } from "../../hooks/useFetch";
+import type { ServicePackageDto } from "../../api/types";
 import BookingSection from "./BookingSection";
 
 interface Props {
-  selectedPackage: ServicePackage | null;
-  onSelectPackage: (pkg: ServicePackage) => void;
+  selectedPackage: ServicePackageDto | null;
+  onSelectPackage: (pkg: ServicePackageDto) => void;
   peopleCount: number;
   setPeopleCount: (updater: (c: number) => number) => void;
 }
 
 export default function PackageStep({ selectedPackage, onSelectPackage, peopleCount, setPeopleCount }: Props) {
+  const { data: servicePackages } = useFetch(() => packagesApi.list(), []);
+  const packages = servicePackages ?? [];
+
   return (
     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
       <BookingSection icon={<Package size={15} />} title="Alege Pachetul">
         <div className="flex flex-col gap-2.5">
-          {servicePackages.map((pkg) => {
+          {packages.map((pkg) => {
             const isActive = selectedPackage?.id === pkg.id;
             return (
               <button

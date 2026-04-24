@@ -1,4 +1,4 @@
-import type { ServicePackage } from "../../types";
+import type { ServicePackageDto } from "../../api/types";
 import BookingModal from "./BookingModal";
 import PhotographerStep from "./PhotographerStep";
 import CalendarStep from "./CalendarStep";
@@ -8,7 +8,7 @@ import SummaryCard from "./SummaryCard";
 import { useBookingFlow } from "./useBookingFlow";
 
 interface BookingProps {
-  preselectedPackage: ServicePackage | null;
+  preselectedPackage: ServicePackageDto | null;
 }
 
 export default function Booking({ preselectedPackage }: BookingProps) {

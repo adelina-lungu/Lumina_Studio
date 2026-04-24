@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { X } from "lucide-react";
 import Booking from "./Booking";
-import type { ServicePackage } from "../../types";
+import type { ServicePackageDto } from "../../api/types";
 
 interface BookingDrawerProps {
   open: boolean;
   onClose: () => void;
-  preselectedPackage: ServicePackage | null;
+  preselectedPackage: ServicePackageDto | null;
 }
 
 export default function BookingDrawer({ open, onClose, preselectedPackage }: BookingDrawerProps) {
