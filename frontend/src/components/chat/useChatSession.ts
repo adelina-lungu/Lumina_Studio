@@ -23,7 +23,7 @@ function toLocal(dto: ChatMessageDto): ChatMessage {
 
 export function useChatSession(open: boolean) {
   const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role === "admin" || user?.role === "owner";
 
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);

@@ -25,7 +25,7 @@ export default function AdminSupportPage() {
         {chat.selectedClient ? (
           <>
             <MessageThread client={chat.selectedClient} messages={chat.messages} />
-            <MessageInput onSend={(text) => chat.sendReply(text, user.name)} />
+            <MessageInput onSend={(text) => chat.sendReply(text)} />
           </>
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center text-center px-6">

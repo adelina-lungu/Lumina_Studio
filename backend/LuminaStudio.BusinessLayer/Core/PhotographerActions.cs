@@ -66,6 +66,49 @@ namespace LuminaStudio.BusinessLayer.Core
             return photographers.Select(MapWithBusyDates).ToList();
         }
 
+        protected List<PhotographerDto> GetAllAdminExecution()
+        {
+            using var context = new AppDbContext();
+
+            var photographers = context.Photographers
+                .Include(p => p.Availability)
+                .OrderBy(p => p.DisplayOrder)
+                .ToList();
+
+            return photographers.Select(MapWithBusyDates).ToList();
+        }
+
+        protected ActionResponse CreateExecution(CreatePhotographerDto dto)
+        {
+            using var context = new AppDbContext();
+
+            var slug = dto.Name.ToLower().Replace(" ", "-");
+
+            var existing = context.Photographers.Any(p => p.Slug == slug);
+            if (existing)
+                return ActionResponse.Fail("A photographer with this name already exists.");
+
+            var photographer = new PhotographerData
+            {
+                Slug = slug,
+                Name = dto.Name,
+                Specialty = dto.Specialty,
+                Bio = dto.Bio,
+                AvatarUrl = dto.AvatarUrl,
+                CoverUrl = dto.CoverUrl,
+                InstagramUrl = dto.InstagramUrl,
+                FacebookUrl = dto.FacebookUrl,
+                WebsiteUrl = dto.WebsiteUrl,
+                IsActive = true,
+                DisplayOrder = dto.DisplayOrder
+            };
+
+            context.Photographers.Add(photographer);
+            context.SaveChanges();
+
+            return ActionResponse.Ok("Photographer created successfully.");
+        }
+
         protected ActionResponse UpdateExecution(int id, UpdatePhotographerDto dto)
         {
             using var context = new AppDbContext();
@@ -114,6 +157,29 @@ namespace LuminaStudio.BusinessLayer.Core
             context.SaveChanges();
 
             return ActionResponse.Ok("Availability set successfully.");
+        }
+
+        protected ActionResponse DeleteExecution(int id)
+        {
+            using var context = new AppDbContext();
+
+            var photographer = context.Photographers
+                .Include(p => p.Bookings)
+                .FirstOrDefault(p => p.Id == id);
+
+            if (photographer == null)
+                return ActionResponse.Fail("Photographer not found.");
+
+            if (photographer.Bookings.Any())
+                return ActionResponse.Fail("Cannot delete photographer with existing bookings.");
+
+            var availability = context.PhotographerAvailability.Where(a => a.PhotographerId == id);
+            context.PhotographerAvailability.RemoveRange(availability);
+
+            context.Photographers.Remove(photographer);
+            context.SaveChanges();
+
+            return ActionResponse.Ok("Photographer deleted successfully.");
         }
 
         protected ActionResponse RemoveAvailabilityExecution(int photographerId, DateTime date)

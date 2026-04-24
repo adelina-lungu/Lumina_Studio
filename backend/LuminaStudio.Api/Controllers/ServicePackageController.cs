@@ -25,6 +25,14 @@ namespace LuminaStudio.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin,Owner")]
+        public IActionResult GetAllAdmin()
+        {
+            var result = _packageActions.GetAllAdmin();
+            return Ok(result);
+        }
+
         [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
@@ -47,11 +55,35 @@ namespace LuminaStudio.Api.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Admin,Owner")]
+        public IActionResult Create([FromBody] CreateServicePackageDto dto)
+        {
+            var result = _packageActions.Create(dto);
+
+            if (!result.Success)
+                return BadRequest(result);
+
+            return StatusCode(201, result);
+        }
+
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin,Owner")]
         public IActionResult Update(int id, [FromBody] UpdateServicePackageDto dto)
         {
             var result = _packageActions.Update(id, dto);
+
+            if (!result.Success)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,Owner")]
+        public IActionResult Delete(int id)
+        {
+            var result = _packageActions.Delete(id);
 
             if (!result.Success)
                 return BadRequest(result);

@@ -25,8 +25,23 @@ public class ServicePackageExecution : ServicePackageActions, IServicePackageAct
         return GetAllExecution();
     }
 
+    public List<ServicePackageDto> GetAllAdmin()
+    {
+        return GetAllAdminExecution();
+    }
+
+    public ActionResponse Create(CreateServicePackageDto dto)
+    {
+        return CreateExecution(dto);
+    }
+
     public ActionResponse Update(int id, UpdateServicePackageDto dto)
     {
         return UpdateExecution(id, dto);
+    }
+
+    public ActionResponse Delete(int id)
+    {
+        return DeleteExecution(id);
     }
 }
