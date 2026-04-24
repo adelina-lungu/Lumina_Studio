@@ -52,7 +52,7 @@ namespace LuminaStudio.Api.Controllers
             if (result == null)
                 return BadRequest();
 
-            return Ok(result);
+            return StatusCode(201, result);
         }
 
         [HttpPost("{conversationId}/messages")]
