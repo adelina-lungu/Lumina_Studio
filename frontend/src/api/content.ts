@@ -3,6 +3,7 @@ import type {
   PortfolioImageDto,
   CreatePortfolioImageDto,
   ServicePackageDto,
+  CreateServicePackageDto,
   UpdateServicePackageDto,
   TestimonialDto,
   CreateTestimonialDto,
@@ -32,6 +33,20 @@ export const packagesApi = {
 
   update: (id: number, dto: UpdateServicePackageDto) =>
     http.put<ActionResponse>(`/packages/${id}`, dto),
+  listAll: () =>
+    http.get<ServicePackageDto[]>("/packages/all"),
+
+  getById: (id: number) =>
+    http.get<ServicePackageDto>(`/packages/${id}`),
+
+  create: (dto: CreateServicePackageDto) =>
+    http.post<ActionResponse>("/packages", dto),
+
+  update: (id: number, dto: UpdateServicePackageDto) =>
+    http.put<ActionResponse>(`/packages/${id}`, dto),
+
+  delete: (id: number) =>
+    http.delete<ActionResponse>(`/packages/${id}`),
 };
 
 export const testimonialsApi = {

@@ -25,9 +25,24 @@ public class PhotographerExecution : PhotographerActions, IPhotographerActions
         return GetAllExecution();
     }
 
+    public List<PhotographerDto> GetAllAdmin()
+    {
+        return GetAllAdminExecution();
+    }
+
+    public ActionResponse Create(CreatePhotographerDto dto)
+    {
+        return CreateExecution(dto);
+    }
+
     public ActionResponse Update(int id, UpdatePhotographerDto dto)
     {
         return UpdateExecution(id, dto);
+    }
+
+    public ActionResponse Delete(int id)
+    {
+        return DeleteExecution(id);
     }
 
     public ActionResponse SetAvailability(SetAvailabilityDto dto)

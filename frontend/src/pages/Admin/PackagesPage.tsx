@@ -5,6 +5,22 @@ import type { ServicePackageDto, UpdateServicePackageDto, PackageTier } from "..
 
 const TIERS: PackageTier[] = ["Standard", "Premium", "Editorial"];
 
+import { Package, Edit3, X, Check, Plus, Trash2 } from "lucide-react";
+import { packagesApi, useApiHandler } from "../../api";
+import type { ServicePackageDto, CreateServicePackageDto, UpdateServicePackageDto, PackageTier } from "../../api/types";
+
+const TIERS: PackageTier[] = ["Standard", "Premium", "Editorial"];
+
+const emptyCreate: CreateServicePackageDto = {
+  tier: "Standard",
+  name: "",
+  price: 0,
+  currency: "€",
+  isHighlighted: false,
+  displayOrder: 0,
+  features: [],
+};
+
 export default function PackagesPage() {
   const { call, addToast } = useApiHandler();
   const [packages, setPackages] = useState<ServicePackageDto[]>([]);
@@ -15,6 +31,12 @@ export default function PackagesPage() {
 
   const load = useCallback(async () => {
     const res = await call(() => packagesApi.list());
+  const [showCreate, setShowCreate] = useState(false);
+  const [createForm, setCreateForm] = useState<CreateServicePackageDto>(emptyCreate);
+  const [createFeatureInput, setCreateFeatureInput] = useState("");
+
+  const load = useCallback(async () => {
+    const res = await call(() => packagesApi.listAll());
     if (res) setPackages(res);
     setLoading(false);
   }, [call]);
@@ -23,6 +45,7 @@ export default function PackagesPage() {
 
   const startEdit = (pkg: ServicePackageDto) => {
     setEditingId(pkg.id);
+    setShowCreate(false);
     setForm({
       tier: pkg.tier,
       name: pkg.name,
@@ -51,6 +74,26 @@ export default function PackagesPage() {
     }
   };
 
+  const handleCreate = async () => {
+    if (!createForm.name.trim()) return;
+    const res = await call(() => packagesApi.create(createForm));
+    if (res) {
+      addToast("success", "Pachet creat cu succes.");
+      setShowCreate(false);
+      setCreateForm(emptyCreate);
+      load();
+    }
+  };
+
+  const handleDelete = async (id: number, name: string) => {
+    if (!confirm(`Sigur vrei sa stergi pachetul "${name}"?`)) return;
+    const res = await call(() => packagesApi.delete(id));
+    if (res) {
+      addToast("success", "Pachet sters cu succes.");
+      load();
+    }
+  };
+
   const addFeature = () => {
     if (!form || !featureInput.trim()) return;
     setForm({ ...form, features: [...form.features, featureInput.trim()] });
@@ -72,6 +115,95 @@ export default function PackagesPage() {
         </div>
       </div>
 
+  const addCreateFeature = () => {
+    if (!createFeatureInput.trim()) return;
+    setCreateForm({ ...createForm, features: [...createForm.features, createFeatureInput.trim()] });
+    setCreateFeatureInput("");
+  };
+
+  const removeCreateFeature = (index: number) => {
+    setCreateForm({ ...createForm, features: createForm.features.filter((_, i) => i !== index) });
+  };
+
+  return (
+    <div className="px-6 py-8 md:px-10">
+      <div className="mb-8 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Package size={24} className="text-gold-400" />
+          <div>
+            <h1 className="font-serif text-2xl font-semibold text-stone-100">Pachete Servicii</h1>
+            <p className="mt-1 text-sm text-stone-500">Administreaza pachetele de servicii.</p>
+          </div>
+        </div>
+        <button
+          onClick={() => { setShowCreate(!showCreate); cancelEdit(); }}
+          className="cursor-pointer flex items-center gap-2 rounded-lg bg-gold-400 px-4 py-2.5 text-sm font-medium text-stone-950 hover:bg-gold-300"
+        >
+          <Plus size={16} /> Adauga Pachet
+        </button>
+      </div>
+
+      {showCreate && (
+        <div className="mb-6 rounded-lg border border-gold-400/20 bg-stone-900/50 p-6 space-y-4">
+          <h3 className="text-sm font-medium text-gold-400 uppercase tracking-wider">Pachet Nou</h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-stone-400">Nume *</label>
+              <input type="text" value={createForm.name} onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
+                className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-stone-400">Tier</label>
+              <select value={createForm.tier} onChange={(e) => setCreateForm({ ...createForm, tier: e.target.value as PackageTier })}
+                className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none">
+                {TIERS.map((t) => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-stone-400">Pret</label>
+              <div className="flex gap-2">
+                <input type="number" value={createForm.price} onChange={(e) => setCreateForm({ ...createForm, price: Number(e.target.value) })}
+                  className="flex-1 rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                <input type="text" value={createForm.currency} onChange={(e) => setCreateForm({ ...createForm, currency: e.target.value })}
+                  className="w-16 rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+              </div>
+            </div>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-medium text-stone-400">Functionalitati</label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {createForm.features.map((f, i) => (
+                <span key={i} className="flex items-center gap-1 rounded-full border border-stone-700 bg-stone-800 px-3 py-1 text-xs text-stone-300">
+                  {f}
+                  <button onClick={() => removeCreateFeature(i)} className="cursor-pointer text-stone-500 hover:text-red-400"><X size={12} /></button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input type="text" value={createFeatureInput} onChange={(e) => setCreateFeatureInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCreateFeature())}
+                placeholder="Adauga functionalitate..."
+                className="flex-1 rounded-lg border border-stone-800 bg-stone-900 py-2 px-4 text-sm text-stone-100 placeholder:text-stone-600 focus:border-gold-400/50 focus:outline-none" />
+              <button onClick={addCreateFeature} className="cursor-pointer rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-400 hover:text-stone-100 hover:border-stone-600">
+                Adauga
+              </button>
+            </div>
+          </div>
+          <label className="flex items-center gap-2 text-sm text-stone-400 cursor-pointer">
+            <input type="checkbox" checked={createForm.isHighlighted} onChange={(e) => setCreateForm({ ...createForm, isHighlighted: e.target.checked })} className="accent-gold-400" />
+            Evidentiiat
+          </label>
+          <div className="flex gap-2">
+            <button onClick={handleCreate} className="cursor-pointer flex items-center gap-2 rounded-lg bg-gold-400 px-4 py-2.5 text-sm font-medium text-stone-950 hover:bg-gold-300">
+              <Check size={16} /> Creaza
+            </button>
+            <button onClick={() => { setShowCreate(false); setCreateForm(emptyCreate); }} className="cursor-pointer rounded-lg border border-stone-700 px-4 py-2.5 text-sm text-stone-400 hover:text-stone-100">
+              Anuleaza
+            </button>
+          </div>
+        </div>
+      )}
+
       {loading ? (
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -79,6 +211,12 @@ export default function PackagesPage() {
               <div className="h-4 w-1/4 rounded bg-stone-800" />
             </div>
           ))}
+        </div>
+      ) : packages.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-lg border border-stone-800 bg-stone-900/50 px-6 py-16 text-center">
+          <Package size={40} className="text-stone-700 mb-4" />
+          <p className="text-lg font-medium text-stone-400">Niciun pachet adaugat</p>
+          <p className="mt-2 text-sm text-stone-600">Apasa butonul "Adauga Pachet" pentru a incepe.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -103,6 +241,13 @@ export default function PackagesPage() {
                         onChange={(e) => setForm({ ...form, tier: e.target.value as PackageTier })}
                         className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none"
                       >
+                      <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-stone-400">Tier</label>
+                      <select value={form.tier} onChange={(e) => setForm({ ...form, tier: e.target.value as PackageTier })}
+                        className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none">
                         {TIERS.map((t) => <option key={t} value={t}>{t}</option>)}
                       </select>
                     </div>
@@ -125,6 +270,13 @@ export default function PackagesPage() {
                     </div>
                   </div>
 
+                        <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                          className="flex-1 rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                        <input type="text" value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}
+                          className="w-16 rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                      </div>
+                    </div>
+                  </div>
                   <div>
                     <label className="mb-1.5 block text-xs font-medium text-stone-400">Functionalitati</label>
                     <div className="flex flex-wrap gap-2 mb-2">
@@ -134,6 +286,7 @@ export default function PackagesPage() {
                           <button onClick={() => removeFeature(i)} className="cursor-pointer text-stone-500 hover:text-red-400">
                             <X size={12} />
                           </button>
+                          <button onClick={() => removeFeature(i)} className="cursor-pointer text-stone-500 hover:text-red-400"><X size={12} /></button>
                         </span>
                       ))}
                     </div>
@@ -146,6 +299,10 @@ export default function PackagesPage() {
                         placeholder="Adauga functionalitate..."
                         className="flex-1 rounded-lg border border-stone-800 bg-stone-900 py-2 px-4 text-sm text-stone-100 placeholder:text-stone-600 focus:border-gold-400/50 focus:outline-none"
                       />
+                      <input type="text" value={featureInput} onChange={(e) => setFeatureInput(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addFeature())}
+                        placeholder="Adauga functionalitate..."
+                        className="flex-1 rounded-lg border border-stone-800 bg-stone-900 py-2 px-4 text-sm text-stone-100 placeholder:text-stone-600 focus:border-gold-400/50 focus:outline-none" />
                       <button onClick={addFeature} className="cursor-pointer rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-400 hover:text-stone-100 hover:border-stone-600">
                         Adauga
                       </button>
@@ -209,6 +366,20 @@ export default function PackagesPage() {
                   >
                     <Edit3 size={16} />
                   </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => startEdit(pkg)}
+                      className="cursor-pointer rounded-lg border border-stone-700 p-2.5 text-stone-500 hover:border-gold-400/30 hover:text-gold-400"
+                    >
+                      <Edit3 size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(pkg.id, pkg.name)}
+                      className="cursor-pointer rounded-lg border border-stone-700 p-2.5 text-stone-500 hover:border-red-500/30 hover:text-red-400"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

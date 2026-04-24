@@ -57,6 +57,58 @@ namespace LuminaStudio.BusinessLayer.Core
             return packages.Select(sp => _mapper.Map<ServicePackageDto>(sp)).ToList();
         }
 
+        protected List<ServicePackageDto> GetAllAdminExecution()
+        {
+            using var context = new AppDbContext();
+
+            var packages = context.ServicePackages
+                .Include(sp => sp.Features)
+                .OrderBy(sp => sp.DisplayOrder)
+                .ToList();
+
+            return packages.Select(sp => _mapper.Map<ServicePackageDto>(sp)).ToList();
+        }
+
+        protected ActionResponse CreateExecution(CreateServicePackageDto dto)
+        {
+            using var context = new AppDbContext();
+
+            var slug = dto.Name.ToLower().Replace(" ", "-");
+
+            var existing = context.ServicePackages.Any(sp => sp.Slug == slug);
+            if (existing)
+                return ActionResponse.Fail("A package with this name already exists.");
+
+            var package = new ServicePackageData
+            {
+                Slug = slug,
+                Tier = dto.Tier,
+                Name = dto.Name,
+                Price = dto.Price,
+                Currency = dto.Currency,
+                IsHighlighted = dto.IsHighlighted,
+                IsActive = true,
+                DisplayOrder = dto.DisplayOrder
+            };
+
+            context.ServicePackages.Add(package);
+            context.SaveChanges();
+
+            for (int i = 0; i < dto.Features.Count; i++)
+            {
+                context.ServicePackageFeatures.Add(new ServicePackageFeatureData
+                {
+                    PackageId = package.Id,
+                    Text = dto.Features[i],
+                    DisplayOrder = i
+                });
+            }
+
+            context.SaveChanges();
+
+            return ActionResponse.Ok("Service package created successfully.");
+        }
+
         protected ActionResponse UpdateExecution(int id, UpdateServicePackageDto dto)
         {
             using var context = new AppDbContext();
@@ -91,6 +143,28 @@ namespace LuminaStudio.BusinessLayer.Core
             context.SaveChanges();
 
             return ActionResponse.Ok("Service package updated successfully.");
+        }
+
+        protected ActionResponse DeleteExecution(int id)
+        {
+            using var context = new AppDbContext();
+
+            var package = context.ServicePackages
+                .Include(sp => sp.Bookings)
+                .Include(sp => sp.Features)
+                .FirstOrDefault(sp => sp.Id == id);
+
+            if (package == null)
+                return ActionResponse.Fail("Service package not found.");
+
+            if (package.Bookings.Any())
+                return ActionResponse.Fail("Cannot delete package with existing bookings.");
+
+            context.ServicePackageFeatures.RemoveRange(package.Features);
+            context.ServicePackages.Remove(package);
+            context.SaveChanges();
+
+            return ActionResponse.Ok("Service package deleted successfully.");
         }
     }
 }
