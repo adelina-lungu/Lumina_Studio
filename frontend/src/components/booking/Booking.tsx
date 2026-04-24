@@ -25,7 +25,7 @@ export default function Booking({ preselectedPackage }: BookingProps) {
 
           <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] xl:gap-8">
             <div className="flex flex-col gap-5">
-              <PhotographerStep selected={flow.selectedPhotographer} onChange={flow.changePhotographer} />
+              <PhotographerStep photographers={flow.photographers} selected={flow.selectedPhotographer} onChange={flow.changePhotographer} />
               <CalendarStep
                 calendarDays={flow.calendarDays}
                 monthLabel={flow.monthLabel}
@@ -67,12 +67,14 @@ export default function Booking({ preselectedPackage }: BookingProps) {
         </div>
       </section>
 
-      <BookingModal
-        open={flow.modalOpen}
-        onClose={() => flow.setModalOpen(false)}
-        photographerName={flow.selectedPhotographer.name}
-        date={flow.selectedDate}
-      />
+      {flow.selectedPhotographer && (
+        <BookingModal
+          open={flow.modalOpen}
+          onClose={() => flow.setModalOpen(false)}
+          photographerName={flow.selectedPhotographer.name}
+          date={flow.selectedDate}
+        />
+      )}
     </>
   );
 }

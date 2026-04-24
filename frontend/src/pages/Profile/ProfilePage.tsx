@@ -24,7 +24,7 @@ export default function ProfilePage() {
       <div className="mx-auto w-full max-w-2xl px-6">
         <div className="h-px w-full bg-stone-800/50" />
       </div>
-      <BookingHistory bookings={[]} />
+      <BookingHistory bookings={profile.bookings} loading={profile.bookingsLoading} />
     </div>
   );
 }

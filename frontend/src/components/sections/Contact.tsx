@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MapPin, Phone, Clock, Send, User, Mail, MessageSquare } from "lucide-react";
+import { contactApi } from "../../api";
 
 const contactInfo = [
   {
@@ -50,12 +51,22 @@ export default function Contact() {
   const fieldError = (field: keyof FieldErrors) =>
     touched.has(field) ? validate()[field] : undefined;
 
-  const handleSubmit = () => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
     const errs = validate();
     setTouched(new Set(["name", "email", "message"]));
     if (Object.keys(errs).length > 0) return;
-    setSent(true);
-    setName(""); setEmail(""); setMessage(""); setTouched(new Set());
+    setSubmitting(true);
+    try {
+      await contactApi.send({ name, email, phone: "", subject: "", message });
+      setSent(true);
+      setName(""); setEmail(""); setMessage(""); setTouched(new Set());
+    } catch {
+      // handled by toast
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputClass = (field: keyof FieldErrors) =>

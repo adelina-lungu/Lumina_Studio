@@ -1,13 +1,13 @@
 import { ArrowUpDown, Filter } from "lucide-react";
-import type { Photographer } from "../../types";
+import type { PhotographerDto } from "../../api/types";
 
 interface Props {
-  photographers: Photographer[];
+  photographers: PhotographerDto[];
   filterPhotographer: string;
   setFilterPhotographer: (v: string) => void;
-  sortField: "date" | "timestamp";
+  sortField: "date" | "createdOn";
   sortAsc: boolean;
-  toggleSort: (field: "date" | "timestamp") => void;
+  toggleSort: (field: "date" | "createdOn") => void;
   totalCount: number;
   shownCount: number;
 }
@@ -33,7 +33,7 @@ export default function BookingFilters({
         >
           <option value="all">Toti fotografii</option>
           {photographers.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
+            <option key={p.id} value={String(p.id)}>{p.name}</option>
           ))}
         </select>
         <span className="text-xs text-stone-600">
@@ -52,13 +52,13 @@ export default function BookingFilters({
           Data {sortField === "date" && (sortAsc ? "↑" : "↓")}
         </button>
         <button
-          onClick={() => toggleSort("timestamp")}
+          onClick={() => toggleSort("createdOn")}
           className={`flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium tracking-wide uppercase transition-colors ${
-            sortField === "timestamp" ? "border-gold-400/30 bg-gold-400/10 text-gold-400" : "border-stone-800 text-stone-500 hover:text-stone-300"
+            sortField === "createdOn" ? "border-gold-400/30 bg-gold-400/10 text-gold-400" : "border-stone-800 text-stone-500 hover:text-stone-300"
           }`}
         >
           <ArrowUpDown size={12} />
-          Recente {sortField === "timestamp" && (sortAsc ? "↑" : "↓")}
+          Recente {sortField === "createdOn" && (sortAsc ? "↑" : "↓")}
         </button>
       </div>
     </div>
