@@ -1,26 +1,18 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
-import { ROUTES } from "../../constants";
 import { useAdminChat } from "./useAdminChat";
 import ConversationList from "./ConversationList";
 import MessageThread from "./MessageThread";
 import MessageInput from "./MessageInput";
 
 export default function AdminSupportPage() {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const chat = useAdminChat();
 
-  useEffect(() => {
-    if (!user || user.role !== "admin") navigate(ROUTES.forbidden);
-  }, [user, navigate]);
-
-  if (!user || user.role !== "admin") return null;
+  if (!user) return null;
 
   return (
-    <div className="flex h-screen bg-stone-950 text-stone-100">
+    <div className="flex h-full min-h-[calc(100vh-49px)] lg:min-h-screen">
       <ConversationList
         clients={chat.clients}
         selectedClient={chat.selectedClient}
@@ -33,7 +25,7 @@ export default function AdminSupportPage() {
         {chat.selectedClient ? (
           <>
             <MessageThread client={chat.selectedClient} messages={chat.messages} />
-            <MessageInput onSend={(text) => chat.sendReply(text, user.name)} />
+            <MessageInput onSend={(text) => chat.sendReply(text)} />
           </>
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center text-center px-6">

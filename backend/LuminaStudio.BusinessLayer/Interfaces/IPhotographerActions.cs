@@ -8,7 +8,10 @@ namespace LuminaStudio.BusinessLayer.Interfaces
         PhotographerDto? GetById(int id);
         PhotographerDto? GetBySlug(string slug);
         List<PhotographerDto> GetAll();
+        List<PhotographerDto> GetAllAdmin();
+        ActionResponse Create(CreatePhotographerDto dto);
         ActionResponse Update(int id, UpdatePhotographerDto dto);
+        ActionResponse Delete(int id);
         ActionResponse SetAvailability(SetAvailabilityDto dto);
         ActionResponse RemoveAvailability(int photographerId, DateTime date);
     }

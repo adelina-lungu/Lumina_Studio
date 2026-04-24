@@ -4,7 +4,7 @@ import { authApi } from "../api/auth";
 import { ApiError, setToken } from "../api/client";
 import type { UserRole as ApiRole } from "../api/types";
 
-export type UserRole = "admin" | "client";
+export type UserRole = "owner" | "admin" | "client";
 
 export interface User {
   id: number;
@@ -12,6 +12,14 @@ export interface User {
   email: string;
   phone: string;
   role: UserRole;
+}
+
+export function isStaff(user: User | null): boolean {
+  return user?.role === "admin" || user?.role === "owner";
+}
+
+export function isOwner(user: User | null): boolean {
+  return user?.role === "owner";
 }
 
 interface AuthContextType {
@@ -28,7 +36,9 @@ const AuthContext = createContext<AuthContextType | null>(null);
 const USER_KEY = "lumina_user";
 
 function mapRole(apiRole: ApiRole): UserRole {
-  return apiRole === "Admin" || apiRole === "Owner" ? "admin" : "client";
+  if (apiRole === "Owner") return "owner";
+  if (apiRole === "Admin") return "admin";
+  return "client";
 }
 
 function toUser(dto: { id: number; name: string; email: string; phone: string; role: ApiRole }): User {

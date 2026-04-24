@@ -8,6 +8,9 @@ namespace LuminaStudio.BusinessLayer.Interfaces
         ServicePackageDto? GetById(int id);
         ServicePackageDto? GetBySlug(string slug);
         List<ServicePackageDto> GetAll();
+        List<ServicePackageDto> GetAllAdmin();
+        ActionResponse Create(CreateServicePackageDto dto);
         ActionResponse Update(int id, UpdateServicePackageDto dto);
+        ActionResponse Delete(int id);
     }
 }
