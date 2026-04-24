@@ -16,7 +16,11 @@ export const authApi = {
   },
 
   register: async (dto: UserRegisterDto) => {
-    const res = await http.post<LoginResponseDto>("/auth/register", dto);
+    await http.post<ActionResponse>("/auth/register", dto);
+    const res = await http.post<LoginResponseDto>("/auth/login", {
+      email: dto.email,
+      password: dto.password,
+    });
     setToken(res.token);
     return res;
   },

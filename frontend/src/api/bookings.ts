@@ -30,7 +30,7 @@ export const bookingsApi = {
     http.get<BookingDto>(`/bookings/${id}`),
 
   create: (dto: CreateBookingDto) =>
-    http.post<BookingDto>("/bookings", dto),
+    http.post<ActionResponse>("/bookings", dto),
 
   cancel: (id: number) =>
     http.post<ActionResponse>(`/bookings/${id}/cancel`),

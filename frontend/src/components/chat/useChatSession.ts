@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { chatApi } from "../../api";
+import type { ChatMessageDto } from "../../api/types";
 
 export interface ChatMessage {
   id: string;
@@ -9,66 +11,79 @@ export interface ChatMessage {
   senderName?: string;
 }
 
-const CLIENT_LIST_KEY = "lumina_chat_list";
-
-function registerChat(email: string, name: string) {
-  const raw = localStorage.getItem(CLIENT_LIST_KEY) || "[]";
-  const list = JSON.parse(raw) as Array<{ email: string; name: string }>;
-  if (!list.some((c) => c.email === email)) {
-    list.push({ email, name });
-    localStorage.setItem(CLIENT_LIST_KEY, JSON.stringify(list));
-  }
+function toLocal(dto: ChatMessageDto): ChatMessage {
+  return {
+    id: String(dto.id),
+    text: dto.text,
+    sender: dto.sender === "Client" ? "client" : "studio",
+    timestamp: new Date(dto.createdOn).getTime(),
+    senderName: dto.senderName,
+  };
 }
 
 export function useChatSession(open: boolean) {
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
-  const storageKey = user ? `lumina_chat_${user.email}` : null;
 
+  const [conversationId, setConversationId] = useState<number | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [seenStudioCount, setSeenStudioCount] = useState(0);
 
-  useEffect(() => {
-    if (!storageKey || isAdmin) {
-      setMessages([]);
-      return;
+  const loadConversation = useCallback(async () => {
+    if (!user || isAdmin) return;
+    try {
+      const conv = await chatApi.startConversation(user.email, user.name);
+      setConversationId(conv.id);
+      setMessages(conv.messages.map(toLocal));
+    } catch {
+      // server unavailable
     }
-    const saved = localStorage.getItem(storageKey);
-    setMessages(saved ? JSON.parse(saved) : []);
-  }, [storageKey, isAdmin]);
+  }, [user, isAdmin]);
 
   useEffect(() => {
-    if (!storageKey || isAdmin) return;
-    const id = setInterval(() => {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) setMessages(JSON.parse(saved));
-    }, 2000);
+    if (open) loadConversation();
+  }, [open, loadConversation]);
+
+  useEffect(() => {
+    if (!open || !conversationId || isAdmin) return;
+    const id = setInterval(async () => {
+      try {
+        const conv = await chatApi.getConversation(conversationId);
+        setMessages(conv.messages.map(toLocal));
+      } catch {
+        // silent
+      }
+    }, 5000);
     return () => clearInterval(id);
-  }, [storageKey, isAdmin]);
-
-  useEffect(() => {
-    if (storageKey && !isAdmin && messages.length > 0) {
-      localStorage.setItem(storageKey, JSON.stringify(messages));
-    }
-  }, [messages, storageKey, isAdmin]);
+  }, [open, conversationId, isAdmin]);
 
   useEffect(() => {
     if (open) setSeenStudioCount(messages.filter((m) => m.sender === "studio").length);
   }, [open, messages]);
 
-  const sendMessage = (text: string) => {
-    if (!user) return;
-    registerChat(user.email, user.name);
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now().toString(),
-        text,
-        sender: "client",
-        timestamp: Date.now(),
-        senderName: user.name,
-      },
-    ]);
+  useEffect(() => {
+    if (open && conversationId) {
+      chatApi.markRead(conversationId).catch(() => {});
+    }
+  }, [open, conversationId]);
+
+  const sendMessage = async (text: string) => {
+    if (!user || !conversationId) return;
+
+    const optimistic: ChatMessage = {
+      id: `tmp-${Date.now()}`,
+      text,
+      sender: "client",
+      timestamp: Date.now(),
+      senderName: user.name,
+    };
+    setMessages((prev) => [...prev, optimistic]);
+
+    try {
+      await chatApi.sendMessage(conversationId, { text });
+    } catch {
+      setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
+    }
   };
 
   const studioCount = messages.filter((m) => m.sender === "studio").length;
