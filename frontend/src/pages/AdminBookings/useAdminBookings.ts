@@ -58,6 +58,28 @@ export function useAdminBookings() {
     }
   };
 
+  const confirmBooking = async (booking: BookingDto) => {
+    try {
+      await bookingsApi.confirm(booking.id);
+      setBookings((prev) =>
+        prev.map((b) => (b.id === booking.id ? { ...b, status: "Confirmed" as const } : b))
+      );
+    } catch {
+      // handled by toast
+    }
+  };
+
+  const completeBooking = async (booking: BookingDto) => {
+    try {
+      await bookingsApi.complete(booking.id);
+      setBookings((prev) =>
+        prev.map((b) => (b.id === booking.id ? { ...b, status: "Completed" as const } : b))
+      );
+    } catch {
+      // handled by toast
+    }
+  };
+
   return {
     bookings: filtered,
     totalCount: bookings.length,
@@ -68,6 +90,8 @@ export function useAdminBookings() {
     sortAsc,
     toggleSort,
     cancelBooking,
+    confirmBooking,
+    completeBooking,
     photographers,
   };
 }

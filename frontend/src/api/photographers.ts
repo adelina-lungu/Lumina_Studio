@@ -1,6 +1,7 @@
 import { http } from "./client";
 import type {
   PhotographerDto,
+  UpdatePhotographerDto,
   SetAvailabilityDto,
   ActionResponse,
 } from "./types";
@@ -14,6 +15,9 @@ export const photographersApi = {
 
   getBySlug: (slug: string) =>
     http.get<PhotographerDto>(`/photographers/slug/${slug}`),
+
+  update: (id: number, dto: UpdatePhotographerDto) =>
+    http.put<ActionResponse>(`/photographers/${id}`, dto),
 
   setAvailability: (dto: SetAvailabilityDto) =>
     http.post<ActionResponse>("/photographers/availability", dto),

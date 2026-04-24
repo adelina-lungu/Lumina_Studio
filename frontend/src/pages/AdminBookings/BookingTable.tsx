@@ -1,4 +1,4 @@
-import { Camera, Mail, Trash2, User } from "lucide-react";
+import { Camera, Mail, Trash2, User, CheckCircle, CheckCheck } from "lucide-react";
 import type { BookingDto } from "../../api/types";
 
 const STATUS_LABELS: Record<string, { text: string; className: string }> = {
@@ -11,6 +11,8 @@ const STATUS_LABELS: Record<string, { text: string; className: string }> = {
 interface Props {
   bookings: BookingDto[];
   onCancel: (booking: BookingDto) => void;
+  onConfirm: (booking: BookingDto) => void;
+  onComplete: (booking: BookingDto) => void;
 }
 
 function formatDate(dateStr: string) {
@@ -30,7 +32,7 @@ function formatTimestamp(dateStr: string) {
   });
 }
 
-export default function BookingTable({ bookings, onCancel }: Props) {
+export default function BookingTable({ bookings, onCancel, onConfirm, onComplete }: Props) {
   if (bookings.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-stone-800 px-6 py-14 text-center">
@@ -79,15 +81,44 @@ export default function BookingTable({ bookings, onCancel }: Props) {
               </p>
             </div>
 
-            {b.status === "Pending" && (
-              <button
-                onClick={() => onCancel(b)}
-                className="shrink-0 cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 opacity-0 transition-all group-hover:opacity-100 hover:border-red-500/20 hover:bg-red-500/10 hover:text-red-400"
-                title="Anuleaza programarea"
-              >
-                <Trash2 size={15} />
-              </button>
-            )}
+            <div className="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+              {b.status === "Pending" && (
+                <>
+                  <button
+                    onClick={() => onConfirm(b)}
+                    className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-emerald-500/20 hover:bg-emerald-500/10 hover:text-emerald-400"
+                    title="Confirma programarea"
+                  >
+                    <CheckCircle size={15} />
+                  </button>
+                  <button
+                    onClick={() => onCancel(b)}
+                    className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-red-500/20 hover:bg-red-500/10 hover:text-red-400"
+                    title="Anuleaza programarea"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </>
+              )}
+              {b.status === "Confirmed" && (
+                <>
+                  <button
+                    onClick={() => onComplete(b)}
+                    className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-blue-500/20 hover:bg-blue-500/10 hover:text-blue-400"
+                    title="Finalizeaza programarea"
+                  >
+                    <CheckCheck size={15} />
+                  </button>
+                  <button
+                    onClick={() => onCancel(b)}
+                    className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-red-500/20 hover:bg-red-500/10 hover:text-red-400"
+                    title="Anuleaza programarea"
+                  >
+                    <Trash2 size={15} />
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         );
       })}
