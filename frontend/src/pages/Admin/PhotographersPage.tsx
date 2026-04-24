@@ -1,0 +1,168 @@
+import { useCallback, useEffect, useState } from "react";
+import { Camera, Edit3, Check, Globe, Instagram } from "lucide-react";
+import { photographersApi, useApiHandler } from "../../api";
+import type { PhotographerDto, UpdatePhotographerDto } from "../../api/types";
+
+export default function PhotographersPage() {
+  const { call, addToast } = useApiHandler();
+  const [photographers, setPhotographers] = useState<PhotographerDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [form, setForm] = useState<UpdatePhotographerDto | null>(null);
+
+  const load = useCallback(async () => {
+    const res = await call(() => photographersApi.list());
+    if (res) setPhotographers(res);
+    setLoading(false);
+  }, [call]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const startEdit = (p: PhotographerDto) => {
+    setEditingId(p.id);
+    setForm({
+      name: p.name,
+      specialty: p.specialty,
+      bio: p.bio,
+      avatarUrl: p.avatarUrl,
+      coverUrl: p.coverUrl,
+      instagramUrl: p.instagramUrl,
+      facebookUrl: p.facebookUrl,
+      websiteUrl: p.websiteUrl,
+      isActive: p.isActive,
+      displayOrder: p.displayOrder,
+    });
+  };
+
+  const cancelEdit = () => { setEditingId(null); setForm(null); };
+
+  const handleSave = async () => {
+    if (!form || editingId === null) return;
+    const res = await call(() => photographersApi.update(editingId, form));
+    if (res) {
+      addToast("success", "Fotograf actualizat cu succes.");
+      cancelEdit();
+      load();
+    }
+  };
+
+  return (
+    <div className="px-6 py-8 md:px-10">
+      <div className="mb-8 flex items-center gap-3">
+        <Camera size={24} className="text-gold-400" />
+        <div>
+          <h1 className="font-serif text-2xl font-semibold text-stone-100">Fotografi</h1>
+          <p className="mt-1 text-sm text-stone-500">Editeaza profilurile fotografilor.</p>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="animate-pulse rounded-lg border border-stone-800 bg-stone-900/50 px-5 py-8">
+              <div className="h-4 w-1/3 rounded bg-stone-800" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {photographers.map((p) => (
+            <div key={p.id} className="rounded-lg border border-stone-800 bg-stone-900/50 p-6">
+              {editingId === p.id && form ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-stone-400">Nume</label>
+                      <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-stone-400">Specialitate</label>
+                      <input type="text" value={form.specialty} onChange={(e) => setForm({ ...form, specialty: e.target.value })}
+                        className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-stone-400">Avatar URL</label>
+                      <input type="url" value={form.avatarUrl} onChange={(e) => setForm({ ...form, avatarUrl: e.target.value })}
+                        className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-stone-400">Cover URL</label>
+                      <input type="url" value={form.coverUrl} onChange={(e) => setForm({ ...form, coverUrl: e.target.value })}
+                        className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-xs font-medium text-stone-400">Bio</label>
+                    <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3}
+                      className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none resize-none" />
+                  </div>
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-stone-400">Instagram URL</label>
+                      <input type="url" value={form.instagramUrl ?? ""} onChange={(e) => setForm({ ...form, instagramUrl: e.target.value || null })}
+                        className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-stone-400">Facebook URL</label>
+                      <input type="url" value={form.facebookUrl ?? ""} onChange={(e) => setForm({ ...form, facebookUrl: e.target.value || null })}
+                        className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-stone-400">Website URL</label>
+                      <input type="url" value={form.websiteUrl ?? ""} onChange={(e) => setForm({ ...form, websiteUrl: e.target.value || null })}
+                        className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2 text-sm text-stone-400 cursor-pointer">
+                      <input type="checkbox" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} className="accent-gold-400" />
+                      Activ
+                    </label>
+                    <div>
+                      <label className="text-xs font-medium text-stone-400 mr-2">Ordine:</label>
+                      <input type="number" value={form.displayOrder} onChange={(e) => setForm({ ...form, displayOrder: Number(e.target.value) })}
+                        className="w-20 rounded-lg border border-stone-800 bg-stone-900 py-1.5 px-3 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={handleSave} className="cursor-pointer flex items-center gap-2 rounded-lg bg-gold-400 px-4 py-2.5 text-sm font-medium text-stone-950 hover:bg-gold-300">
+                      <Check size={16} /> Salveaza
+                    </button>
+                    <button onClick={cancelEdit} className="cursor-pointer rounded-lg border border-stone-700 px-4 py-2.5 text-sm text-stone-400 hover:text-stone-100">
+                      Anuleaza
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-5">
+                  <img src={p.avatarUrl} alt={p.name} className="h-16 w-16 rounded-full object-cover border-2 border-stone-800" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg font-medium text-stone-100">{p.name}</h3>
+                      {!p.isActive && (
+                        <span className="rounded border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[10px] font-medium text-red-400 uppercase">Inactiv</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-stone-400">{p.specialty}</p>
+                    <div className="mt-1 flex items-center gap-3 text-stone-600">
+                      {p.instagramUrl && <Instagram size={14} />}
+                      {p.websiteUrl && <Globe size={14} />}
+                      <span className="text-xs">{p.busyDates.length} zile ocupate</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => startEdit(p)}
+                    className="cursor-pointer rounded-lg border border-stone-700 p-2.5 text-stone-500 hover:border-gold-400/30 hover:text-gold-400"
+                  >
+                    <Edit3 size={16} />
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

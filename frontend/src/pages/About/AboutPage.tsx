@@ -1,5 +1,5 @@
-import AboutUs from "../../components/AboutUs";
-import Process from "../../components/Process";
+import AboutUs from "../../components/sections/AboutUs";
+import Process from "../../components/ui/Process";
 
 export default function AboutPage() {
   return (

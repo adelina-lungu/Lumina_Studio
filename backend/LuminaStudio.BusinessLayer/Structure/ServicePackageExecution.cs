@@ -1,0 +1,32 @@
+using AutoMapper;
+using LuminaStudio.BusinessLayer.Core;
+using LuminaStudio.BusinessLayer.Interfaces;
+using LuminaStudio.Domain.Models.Responses;
+using LuminaStudio.Domain.Models.ServicePackage;
+
+namespace LuminaStudio.BusinessLayer.Structure;
+
+public class ServicePackageExecution : ServicePackageActions, IServicePackageActions
+{
+    public ServicePackageExecution(IMapper mapper) : base(mapper) {}
+
+    public ServicePackageDto? GetById(int id)
+    {
+        return GetByIdExecution(id);
+    }
+
+    public ServicePackageDto? GetBySlug(string slug)
+    {
+        return GetBySlugExecution(slug);
+    }
+
+    public List<ServicePackageDto> GetAll()
+    {
+        return GetAllExecution();
+    }
+
+    public ActionResponse Update(int id, UpdateServicePackageDto dto)
+    {
+        return UpdateExecution(id, dto);
+    }
+}

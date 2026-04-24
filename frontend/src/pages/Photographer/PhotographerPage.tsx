@@ -1,26 +1,30 @@
 import { useParams, Navigate } from "react-router-dom";
-import { photographers, portfolioImages, teamMembers } from "../../data/mock";
-import AvailabilityCalendar from "../../components/AvailabilityCalendar";
+import { photographersApi, portfolioApi } from "../../api";
+import { useFetch } from "../../hooks/useFetch";
+import AvailabilityCalendar from "../../components/availability/AvailabilityCalendar";
 import ProfileHeader from "./ProfileHeader";
 import PortfolioGallery from "./PortfolioGallery";
 import OtherPhotographers from "./OtherPhotographers";
 
-const CATEGORY_BY_ROLE: Record<string, string> = {
-  "Editorial & Fashion": "fashion",
-  "Nunți & Evenimente": "wedding",
-  "Portrete Artistice": "portrait",
-};
-
 export default function PhotographerPage() {
-  const { id } = useParams();
+  const { id: slug } = useParams();
 
-  const member = teamMembers.find((m) => m.id === id);
+  const { data: photographers, loading: loadingTeam } = useFetch(() => photographersApi.list(), []);
+  const { data: allPhotos, loading: loadingPhotos } = useFetch(() => portfolioApi.list(), []);
+
+  if (loadingTeam || loadingPhotos) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-stone-950">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-700 border-t-gold-400" />
+      </div>
+    );
+  }
+
+  const member = (photographers ?? []).find((p) => p.slug === slug);
   if (!member) return <Navigate to="/404" replace />;
 
-  const photographer = photographers.find((p) => p.id === id);
-  const category = CATEGORY_BY_ROLE[member.role] ?? "all";
-  const photos = portfolioImages.filter((img) => img.category === category);
-  const otherMembers = teamMembers.filter((m) => m.id !== id);
+  const photos = (allPhotos ?? []).filter((img) => img.photographerId === member.id);
+  const others = (photographers ?? []).filter((p) => p.slug !== slug);
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100">
@@ -29,15 +33,15 @@ export default function PhotographerPage() {
       <section className="px-6 py-16 md:px-10">
         <div className="mx-auto w-full max-w-2xl">
           <AvailabilityCalendar
-            photographerId={member.id}
+            photographerId={String(member.id)}
             photographerName={member.name}
-            initialBusyDates={photographer?.busyDates || []}
+            initialBusyDates={member.busyDates}
           />
         </div>
       </section>
 
       <PortfolioGallery firstName={member.name.split(" ")[0]} photos={photos} />
-      <OtherPhotographers members={otherMembers} />
+      <OtherPhotographers members={others} />
 
       <footer className="border-t border-stone-800/50 px-6 py-8 text-center">
         <p className="text-sm text-stone-600">&copy; 2026 Lumina Studio. Toate drepturile rezervate.</p>

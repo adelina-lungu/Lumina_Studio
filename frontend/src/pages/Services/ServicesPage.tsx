@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import Services from "../../components/Services";
+import Services from "../../components/sections/Services";
 import type { LayoutContext } from "../../layouts/MainLayout";
 
 export default function ServicesPage() {

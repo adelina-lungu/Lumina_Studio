@@ -1,10 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Award, Camera, Facebook, Globe, Heart, Instagram } from "lucide-react";
-import type { TeamMember } from "../../types";
+import type { PhotographerDto } from "../../api/types";
 import { ROUTES } from "../../constants";
 
 interface Props {
-  member: TeamMember;
+  member: PhotographerDto;
 }
 
 export default function ProfileHeader({ member }: Props) {
@@ -13,7 +13,7 @@ export default function ProfileHeader({ member }: Props) {
   const stats = [
     { icon: <Camera size={16} />, value: "240+", label: "Sedinte foto" },
     { icon: <Heart size={16} />, value: "98%", label: "Clienti multumiti" },
-    { icon: <Award size={16} />, value: member.id === "alex" ? "5" : member.id === "maria" ? "4" : "3", label: "Premii" },
+    { icon: <Award size={16} />, value: String(member.displayOrder + 3), label: "Premii" },
   ];
 
   return (
@@ -33,7 +33,7 @@ export default function ProfileHeader({ member }: Props) {
 
       <section className="relative min-h-screen flex items-end">
         <div className="absolute inset-0">
-          <img src={member.cover} alt={member.name} className="h-full w-full object-cover" />
+          {member.coverUrl && <img src={member.coverUrl} alt={member.name} className="h-full w-full object-cover" />}
           <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-stone-950/20" />
           <div className="absolute inset-0 bg-gradient-to-r from-stone-950/80 via-transparent to-transparent" />
         </div>
@@ -43,12 +43,14 @@ export default function ProfileHeader({ member }: Props) {
             <div className="max-w-2xl">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold-400/30 bg-gold-400/10 px-4 py-1.5 backdrop-blur-sm">
                 <Camera size={12} className="text-gold-400" />
-                <span className="text-xs font-medium tracking-[0.2em] uppercase text-gold-400">{member.role}</span>
+                <span className="text-xs font-medium tracking-[0.2em] uppercase text-gold-400">{member.specialty}</span>
               </div>
 
               <h1 className="font-serif text-5xl font-semibold text-stone-50 sm:text-6xl lg:text-7xl">{member.name}</h1>
 
-              <p className="mt-6 text-base leading-relaxed text-stone-300 sm:text-lg max-w-xl">{member.bio}</p>
+              {member.bio && (
+                <p className="mt-6 text-base leading-relaxed text-stone-300 sm:text-lg max-w-xl">{member.bio}</p>
+              )}
 
               <div className="mt-8 flex flex-wrap gap-6">
                 {stats.map((s) => (
@@ -63,9 +65,9 @@ export default function ProfileHeader({ member }: Props) {
               </div>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                {member.socials.instagram && <SocialLink href={member.socials.instagram} icon={<Instagram size={16} />} />}
-                {member.socials.facebook && <SocialLink href={member.socials.facebook} icon={<Facebook size={16} />} />}
-                {member.socials.website && <SocialLink href={member.socials.website} icon={<Globe size={16} />} />}
+                {member.instagramUrl && <SocialLink href={member.instagramUrl} icon={<Instagram size={16} />} />}
+                {member.facebookUrl && <SocialLink href={member.facebookUrl} icon={<Facebook size={16} />} />}
+                {member.websiteUrl && <SocialLink href={member.websiteUrl} icon={<Globe size={16} />} />}
                 <a href="#portofoliu" className="ml-2 inline-flex items-center gap-2 border border-gold-400/40 bg-gold-400/10 px-6 py-3 text-sm font-medium tracking-widest uppercase text-gold-400 backdrop-blur-sm transition-all duration-300 hover:border-gold-400 hover:bg-gold-400/20">
                   Vezi lucrarile
                   <ArrowRight size={14} />

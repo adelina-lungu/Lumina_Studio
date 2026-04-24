@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import BackToTop from "../components/BackToTop";
-import BookingDrawer from "../components/BookingDrawer";
-import AuthModal from "../components/AuthModal";
+import Header from "../components/layout/Header";
+import Footer from "../components/layout/Footer";
+import BackToTop from "../components/layout/BackToTop";
+import BookingDrawer from "../components/booking/BookingDrawer";
+import AuthModal from "../components/auth/AuthModal";
 import { useAuth } from "../contexts/AuthContext";
-import type { ServicePackage } from "../types";
+import type { ServicePackageDto } from "../api/types";
 
 export interface LayoutContext {
   requireAuth: (cb: () => void) => void;
   openAuth: () => void;
   openBooking: () => void;
-  selectPackage: (pkg: ServicePackage) => void;
+  selectPackage: (pkg: ServicePackageDto) => void;
 }
 
 export default function MainLayout() {
-  const [preselectedPackage, setPreselectedPackage] = useState<ServicePackage | null>(null);
+  const [preselectedPackage, setPreselectedPackage] = useState<ServicePackageDto | null>(null);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const { user } = useAuth();
@@ -32,7 +32,7 @@ export default function MainLayout() {
       setBookingOpen(true);
     });
 
-  const selectPackage = (pkg: ServicePackage) =>
+  const selectPackage = (pkg: ServicePackageDto) =>
     requireAuth(() => {
       setPreselectedPackage(pkg);
       setBookingOpen(true);
