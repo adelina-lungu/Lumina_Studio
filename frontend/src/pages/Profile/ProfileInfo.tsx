@@ -10,12 +10,13 @@ interface Props {
   setEditPhone: (v: string) => void;
   hasChanges: boolean;
   saved: boolean;
+  error: string;
   onSave: () => void;
 }
 
 const isValidPhone = (p: string) => !p.trim() || /^\+?[0-9]{7,15}$/.test(p.replace(/\s/g, ""));
 
-export default function ProfileInfo({ user, editName, setEditName, editPhone, setEditPhone, hasChanges, saved, onSave }: Props) {
+export default function ProfileInfo({ user, editName, setEditName, editPhone, setEditPhone, hasChanges, saved, error, onSave }: Props) {
   const initials = user.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
   const [touchedName, setTouchedName] = useState(false);
   const [touchedPhone, setTouchedPhone] = useState(false);
@@ -98,6 +99,12 @@ export default function ProfileInfo({ user, editName, setEditName, editPhone, se
           />
           <p className="mt-1 text-[11px] text-stone-600">Emailul nu poate fi modificat</p>
         </div>
+
+        {error && (
+          <div className="mt-2 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-sm text-red-400">
+            {error}
+          </div>
+        )}
 
         {saved && (
           <div className="mt-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-sm text-emerald-400">

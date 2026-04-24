@@ -1,12 +1,12 @@
-import type { PortfolioImage } from "../../types";
+import type { PortfolioImageDto } from "../../api/types";
 
 interface Props {
   firstName: string;
-  photos: PortfolioImage[];
+  photos: PortfolioImageDto[];
 }
 
-const aspectClass = (a: PortfolioImage["aspect"]) =>
-  a === "tall" ? "aspect-[3/4]" : a === "wide" ? "aspect-[4/3]" : "aspect-square";
+const aspectClass = (a: PortfolioImageDto["aspect"]) =>
+  a === "Tall" ? "aspect-[3/4]" : a === "Wide" ? "aspect-[4/3]" : "aspect-square";
 
 export default function PortfolioGallery({ firstName, photos }: Props) {
   return (

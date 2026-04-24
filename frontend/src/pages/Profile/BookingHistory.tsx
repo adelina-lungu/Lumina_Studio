@@ -1,5 +1,11 @@
 import { Calendar, Camera } from "lucide-react";
-import type { ProfileBooking } from "./useProfile";
+
+export interface ProfileBooking {
+  id: string;
+  photographerName: string;
+  date: string;
+  timestamp: number;
+}
 
 interface Props {
   bookings: ProfileBooking[];

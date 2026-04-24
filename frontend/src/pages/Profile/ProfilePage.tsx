@@ -18,12 +18,13 @@ export default function ProfilePage() {
         setEditPhone={profile.setEditPhone}
         hasChanges={profile.hasChanges}
         saved={profile.saved}
+        error={profile.error}
         onSave={profile.save}
       />
       <div className="mx-auto w-full max-w-2xl px-6">
         <div className="h-px w-full bg-stone-800/50" />
       </div>
-      <BookingHistory bookings={profile.bookings} />
+      <BookingHistory bookings={[]} />
     </div>
   );
 }

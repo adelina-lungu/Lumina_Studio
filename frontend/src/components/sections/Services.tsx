@@ -1,16 +1,18 @@
 import { Check, Sparkles } from "lucide-react";
-import { servicePackages } from "../../data/mock";
-import type { ServicePackage } from "../../types";
+import { packagesApi } from "../../api";
+import { useFetch } from "../../hooks/useFetch";
+import type { ServicePackageDto } from "../../api/types";
 
 interface ServicesProps {
-  onSelectPackage: (pkg: ServicePackage) => void;
+  onSelectPackage: (pkg: ServicePackageDto) => void;
 }
 
 export default function Services({ onSelectPackage }: ServicesProps) {
+  const { data: packages, loading } = useFetch(() => packagesApi.list(), []);
+
   return (
     <section id="services" className="px-6 py-20 md:px-10 md:py-28">
       <div className="mx-auto w-full max-w-6xl">
-        {/* Heading */}
         <div className="mb-12 text-center md:mb-16">
           <p className="mb-3 text-sm font-medium tracking-[0.3em] uppercase text-gold-400">
             Investiție
@@ -20,16 +22,31 @@ export default function Services({ onSelectPackage }: ServicesProps) {
           </h2>
         </div>
 
-        {/* Cards */}
-        <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3 items-stretch">
-          {servicePackages.map((pkg) => (
-            <PricingCard
-              key={pkg.id}
-              pkg={pkg}
-              onSelect={() => onSelectPackage(pkg)}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3 items-stretch">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="animate-pulse border border-stone-800 bg-stone-900/40 p-8">
+                <div className="h-6 w-24 rounded bg-stone-800" />
+                <div className="mt-4 h-10 w-32 rounded bg-stone-800" />
+                <div className="mt-8 space-y-3">
+                  {Array.from({ length: 4 }).map((_, j) => (
+                    <div key={j} className="h-4 w-full rounded bg-stone-800/60" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-3 items-stretch">
+            {(packages ?? []).map((pkg) => (
+              <PricingCard
+                key={pkg.id}
+                pkg={pkg}
+                onSelect={() => onSelectPackage(pkg)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -39,21 +56,21 @@ function PricingCard({
   pkg,
   onSelect,
 }: {
-  pkg: ServicePackage;
+  pkg: ServicePackageDto;
   onSelect: () => void;
 }) {
   return (
     <div
       className={`group relative flex flex-col border p-6 transition-all duration-500 sm:p-8 ${
-        pkg.highlighted
+        pkg.isHighlighted
           ? "border-gold-400/40 bg-gold-400/5"
           : "border-stone-800 bg-stone-900/40 hover:border-stone-700"
       }`}
     >
-      {pkg.highlighted && (
+      {pkg.isHighlighted && (
         <div className="absolute -top-px left-0 right-0 h-px bg-gold-400" />
       )}
-      {pkg.highlighted && (
+      {pkg.isHighlighted && (
         <div className="mb-4 flex w-fit items-center gap-1.5 bg-gold-400 px-3 py-1 text-xs font-semibold tracking-wider uppercase text-stone-950">
           <Sparkles size={12} />
           Cel Mai Popular
@@ -82,7 +99,7 @@ function PricingCard({
       <button
         onClick={onSelect}
         className={`mt-8 w-full cursor-pointer py-3.5 text-sm font-medium tracking-widest uppercase transition-all duration-300 ${
-          pkg.highlighted
+          pkg.isHighlighted
             ? "bg-gold-400 text-stone-950 hover:bg-gold-500"
             : "border border-stone-700 text-stone-300 hover:border-gold-400/50 hover:text-gold-400"
         }`}
