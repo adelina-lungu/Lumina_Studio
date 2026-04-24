@@ -28,6 +28,11 @@ export const packagesApi = {
   list: () =>
     http.get<ServicePackageDto[]>("/packages"),
 
+  getById: (id: number) =>
+    http.get<ServicePackageDto>(`/packages/${id}`),
+
+  update: (id: number, dto: UpdateServicePackageDto) =>
+    http.put<ActionResponse>(`/packages/${id}`, dto),
   listAll: () =>
     http.get<ServicePackageDto[]>("/packages/all"),
 

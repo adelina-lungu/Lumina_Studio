@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
+import { Camera, Edit3, Check, Globe, Instagram } from "lucide-react";
+import { photographersApi, useApiHandler } from "../../api";
+import type { PhotographerDto, UpdatePhotographerDto } from "../../api/types";
 import { Camera, Edit3, Check, Globe, Instagram, Plus, Trash2 } from "lucide-react";
 import { photographersApi, useApiHandler } from "../../api";
 import type { PhotographerDto, CreatePhotographerDto, UpdatePhotographerDto } from "../../api/types";
@@ -21,6 +24,9 @@ export default function PhotographersPage() {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<UpdatePhotographerDto | null>(null);
+
+  const load = useCallback(async () => {
+    const res = await call(() => photographersApi.list());
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState<CreatePhotographerDto>(emptyCreate);
 
@@ -60,6 +66,16 @@ export default function PhotographersPage() {
       load();
     }
   };
+
+  return (
+    <div className="px-6 py-8 md:px-10">
+      <div className="mb-8 flex items-center gap-3">
+        <Camera size={24} className="text-gold-400" />
+        <div>
+          <h1 className="font-serif text-2xl font-semibold text-stone-100">Fotografi</h1>
+          <p className="mt-1 text-sm text-stone-500">Editeaza profilurile fotografilor.</p>
+        </div>
+      </div>
 
   const handleCreate = async () => {
     if (!createForm.name.trim()) return;
@@ -258,6 +274,12 @@ export default function PhotographersPage() {
                       <span className="text-xs">{p.busyDates.length} zile ocupate</span>
                     </div>
                   </div>
+                  <button
+                    onClick={() => startEdit(p)}
+                    className="cursor-pointer rounded-lg border border-stone-700 p-2.5 text-stone-500 hover:border-gold-400/30 hover:text-gold-400"
+                  >
+                    <Edit3 size={16} />
+                  </button>
                   <div className="flex gap-2">
                     <button
                       onClick={() => startEdit(p)}
