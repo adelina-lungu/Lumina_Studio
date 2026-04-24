@@ -22,7 +22,7 @@ export default function SummaryCard(props: Props) {
 
       <div className="p-4 sm:p-5">
         <div className="space-y-3">
-          <Row label="Fotograf" value={selectedPhotographer.name} />
+          <Row label="Fotograf" value={selectedPhotographer?.name ?? "Neselectat"} dimmed={!selectedPhotographer} />
           <Row label="Data" value={dateLabel} dimmed={!selectedDate} />
           <Row label="Pachet" value={selectedPackage?.name ?? "Neselectat"} dimmed={!selectedPackage} />
           <Row label="Persoane" value={String(peopleCount)} />
@@ -51,6 +51,7 @@ export default function SummaryCard(props: Props) {
 
         {!canSubmit && (
           <div className="mt-3 space-y-1 text-[11px] text-stone-600">
+            {!selectedPhotographer && <p>• Selectează un fotograf</p>}
             {!selectedDate && <p>• Selectează o dată disponibilă</p>}
             {!selectedPackage && <p>• Alege un pachet foto</p>}
             {!clientName.trim() && <p>• Completează numele</p>}

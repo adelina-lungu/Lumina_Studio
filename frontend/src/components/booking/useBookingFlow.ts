@@ -1,16 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
-import { photographers } from "../../data/mock";
-import type { Photographer } from "../../types";
-import type { ServicePackageDtoDto } from "../../api/types";
+import { photographersApi, bookingsApi } from "../../api";
+import { useFetch } from "../../hooks/useFetch";
+import type { PhotographerDto, ServicePackageDto } from "../../api/types";
 
-export function useBookingFlow(preselectedPackage: ServicePackageDtoDto | null) {
-  const [selectedPhotographer, setSelectedPhotographer] = useState<Photographer>(photographers[0]);
+export function useBookingFlow(preselectedPackage: ServicePackageDto | null) {
+  const { data: photographers } = useFetch(() => photographersApi.list(), []);
+  const [selectedPhotographer, setSelectedPhotographer] = useState<PhotographerDto | null>(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedPackage, setSelectedPackage] = useState<ServicePackageDto | null>(null);
   const [peopleCount, setPeopleCount] = useState(1);
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (photographers && photographers.length > 0 && !selectedPhotographer) {
+      setSelectedPhotographer(photographers[0]);
+    }
+  }, [photographers, selectedPhotographer]);
 
   useEffect(() => {
     if (preselectedPackage) setSelectedPackage(preselectedPackage);
@@ -39,7 +47,7 @@ export function useBookingFlow(preselectedPackage: ServicePackageDtoDto | null) 
   const toDateStr = (day: number) =>
     `${viewMonth.year}-${String(viewMonth.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-  const isBusy = (day: number) => selectedPhotographer.busyDates.includes(toDateStr(day));
+  const isBusy = (day: number) => selectedPhotographer?.busyDates.includes(toDateStr(day)) ?? false;
 
   const isPast = (day: number) => {
     const d = new Date(viewMonth.year, viewMonth.month, day);
@@ -54,19 +62,36 @@ export function useBookingFlow(preselectedPackage: ServicePackageDtoDto | null) 
     setViewMonth((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { ...v, month: v.month + 1 }));
 
   const canSubmit = Boolean(
-    selectedPhotographer && selectedDate && selectedPackage && clientName.trim() && clientEmail.trim()
+    selectedPhotographer && selectedDate && selectedPackage && clientName.trim() && clientEmail.trim() && !submitting
   );
 
-  const handleConfirm = () => {
-    if (canSubmit) setModalOpen(true);
+  const handleConfirm = async () => {
+    if (!canSubmit || !selectedPhotographer || !selectedPackage) return;
+    setSubmitting(true);
+    try {
+      await bookingsApi.create({
+        photographerId: selectedPhotographer.id,
+        packageId: selectedPackage.id,
+        date: selectedDate,
+        peopleCount,
+        clientName: clientName.trim(),
+        clientEmail: clientEmail.trim(),
+      });
+      setModalOpen(true);
+    } catch {
+      // error handled by caller or toast
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const changePhotographer = (p: Photographer) => {
+  const changePhotographer = (p: PhotographerDto) => {
     setSelectedPhotographer(p);
     setSelectedDate("");
   };
 
   return {
+    photographers: photographers ?? [],
     selectedPhotographer,
     changePhotographer,
     selectedDate,
@@ -90,6 +115,7 @@ export function useBookingFlow(preselectedPackage: ServicePackageDtoDto | null) 
     nextMonth,
     canSubmit,
     handleConfirm,
+    submitting,
   };
 }
 

@@ -1,19 +1,19 @@
 import { Camera } from "lucide-react";
-import { photographers } from "../../data/mock";
-import type { Photographer } from "../../types";
+import type { PhotographerDto } from "../../api/types";
 import BookingSection from "./BookingSection";
 
 interface Props {
-  selected: Photographer;
-  onChange: (p: Photographer) => void;
+  photographers: PhotographerDto[];
+  selected: PhotographerDto | null;
+  onChange: (p: PhotographerDto) => void;
 }
 
-export default function PhotographerStep({ selected, onChange }: Props) {
+export default function PhotographerStep({ photographers, selected, onChange }: Props) {
   return (
     <BookingSection icon={<Camera size={15} />} title="Alege Fotograful">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {photographers.map((p) => {
-          const isActive = selected.id === p.id;
+          const isActive = selected?.id === p.id;
           return (
             <button
               type="button"
@@ -26,7 +26,7 @@ export default function PhotographerStep({ selected, onChange }: Props) {
               }`}
             >
               <img
-                src={p.avatar}
+                src={p.avatarUrl}
                 alt={p.name}
                 className={`h-10 w-10 shrink-0 rounded-full object-cover ring-2 transition-all duration-300 sm:h-14 sm:w-14 ${
                   isActive ? "ring-gold-400/60" : "ring-stone-800 group-hover:ring-stone-700"

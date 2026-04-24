@@ -1,60 +1,46 @@
-import { useMemo, useState } from "react";
-import { photographers } from "../../data/mock";
-import type { AvailabilityNotification } from "../../components/availability/useAvailability";
-
-export interface AdminBooking {
-  id: string;
-  clientName: string;
-  clientEmail: string;
-  photographerId: string;
-  photographerName: string;
-  date: string;
-  timestamp: number;
-}
-
-function loadAllBookings(): AdminBooking[] {
-  const bookings: AdminBooking[] = [];
-  for (const p of photographers) {
-    const raw = localStorage.getItem(`lumina_notif_${p.id}`);
-    if (!raw) continue;
-    const notifs = JSON.parse(raw) as AvailabilityNotification[];
-    for (const n of notifs) {
-      bookings.push({
-        id: n.id,
-        clientName: n.clientName,
-        clientEmail: n.clientEmail,
-        photographerId: p.id,
-        photographerName: p.name,
-        date: n.date,
-        timestamp: n.timestamp,
-      });
-    }
-  }
-  return bookings;
-}
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { bookingsApi, photographersApi } from "../../api";
+import type { BookingDto, PhotographerDto } from "../../api/types";
 
 export function useAdminBookings() {
+  const [bookings, setBookings] = useState<BookingDto[]>([]);
+  const [photographers, setPhotographers] = useState<PhotographerDto[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterPhotographer, setFilterPhotographer] = useState("all");
-  const [sortField, setSortField] = useState<"date" | "timestamp">("timestamp");
+  const [sortField, setSortField] = useState<"date" | "createdOn">("createdOn");
   const [sortAsc, setSortAsc] = useState(false);
-  const [revision, setRevision] = useState(0);
 
-  const allBookings = useMemo(() => loadAllBookings(), [revision]);
+  const load = useCallback(async () => {
+    try {
+      const [bookingRes, photoRes] = await Promise.all([
+        bookingsApi.list({}),
+        photographersApi.list(),
+      ]);
+      setBookings(bookingRes.items);
+      setPhotographers(photoRes);
+    } catch {
+      // handled by toast
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
 
   const filtered = useMemo(() => {
-    let list = allBookings;
+    let list = bookings;
     if (filterPhotographer !== "all") {
-      list = list.filter((b) => b.photographerId === filterPhotographer);
+      list = list.filter((b) => String(b.photographerId) === filterPhotographer);
     }
-    return list.sort((a, b) => {
+    return [...list].sort((a, b) => {
       const cmp = sortField === "date"
         ? a.date.localeCompare(b.date)
-        : a.timestamp - b.timestamp;
+        : a.createdOn.localeCompare(b.createdOn);
       return sortAsc ? cmp : -cmp;
     });
-  }, [allBookings, filterPhotographer, sortField, sortAsc]);
+  }, [bookings, filterPhotographer, sortField, sortAsc]);
 
-  const toggleSort = (field: "date" | "timestamp") => {
+  const toggleSort = (field: "date" | "createdOn") => {
     if (sortField === field) {
       setSortAsc((v) => !v);
     } else {
@@ -63,26 +49,19 @@ export function useAdminBookings() {
     }
   };
 
-  const cancelBooking = (booking: AdminBooking) => {
-    const notifKey = `lumina_notif_${booking.photographerId}`;
-    const bookedKey = `lumina_booked_${booking.photographerId}`;
-    const busyKey = `lumina_busy_${booking.photographerId}`;
-
-    const notifs = JSON.parse(localStorage.getItem(notifKey) || "[]") as AvailabilityNotification[];
-    localStorage.setItem(notifKey, JSON.stringify(notifs.filter((n) => n.id !== booking.id)));
-
-    const booked = JSON.parse(localStorage.getItem(bookedKey) || "[]") as string[];
-    localStorage.setItem(bookedKey, JSON.stringify(booked.filter((d) => d !== booking.date)));
-
-    const busy = JSON.parse(localStorage.getItem(busyKey) || "[]") as string[];
-    localStorage.setItem(busyKey, JSON.stringify(busy.filter((d) => d !== booking.date)));
-
-    setRevision((v) => v + 1);
+  const cancelBooking = async (booking: BookingDto) => {
+    try {
+      await bookingsApi.cancel(booking.id);
+      setBookings((prev) => prev.filter((b) => b.id !== booking.id));
+    } catch {
+      // handled by toast
+    }
   };
 
   return {
     bookings: filtered,
-    totalCount: allBookings.length,
+    totalCount: bookings.length,
+    loading,
     filterPhotographer,
     setFilterPhotographer,
     sortField,
