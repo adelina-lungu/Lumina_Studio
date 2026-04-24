@@ -42,7 +42,7 @@ namespace LuminaStudio.Api.Controllers
             if (!result.Success)
                 return BadRequest(result);
 
-            return Ok(result);
+            return StatusCode(201, result);
         }
 
         [HttpPut("{id}")]
@@ -66,7 +66,7 @@ namespace LuminaStudio.Api.Controllers
             if (!result.Success)
                 return BadRequest(result);
 
-            return Ok(result);
+            return NoContent();
         }
     }
 }
