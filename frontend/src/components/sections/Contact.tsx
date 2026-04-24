@@ -51,7 +51,7 @@ export default function Contact() {
   const fieldError = (field: keyof FieldErrors) =>
     touched.has(field) ? validate()[field] : undefined;
 
-  const [submitting, setSubmitting] = useState(false);
+  const [, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     const errs = validate();

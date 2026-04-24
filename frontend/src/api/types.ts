@@ -223,6 +223,40 @@ export interface CreateContactMessageDto {
   message: string;
 }
 
+export interface CreatePortfolioImageDto {
+  src: string;
+  alt: string;
+  category: PortfolioCategory;
+  aspect: PortfolioAspect;
+  photographerId: number | null;
+  isPublished: boolean;
+  displayOrder: number;
+}
+
+export interface UpdatePhotographerDto {
+  name: string;
+  specialty: string;
+  bio: string;
+  avatarUrl: string;
+  coverUrl: string;
+  instagramUrl: string | null;
+  facebookUrl: string | null;
+  websiteUrl: string | null;
+  isActive: boolean;
+  displayOrder: number;
+}
+
+export interface UpdateServicePackageDto {
+  tier: PackageTier;
+  name: string;
+  price: number;
+  currency: string;
+  isHighlighted: boolean;
+  isActive: boolean;
+  displayOrder: number;
+  features: string[];
+}
+
 export interface ActionResponse {
   success: boolean;
   message: string;

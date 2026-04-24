@@ -1,5 +1,6 @@
 export { ApiError, setToken } from "./client";
 export { authApi } from "./auth";
+export { usersApi } from "./users";
 export { bookingsApi } from "./bookings";
 export { photographersApi } from "./photographers";
 export { chatApi } from "./chat";

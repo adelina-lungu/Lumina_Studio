@@ -23,7 +23,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<FieldErrors>({});
+  const [, setErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState("");
   const [touched, setTouched] = useState<Set<string>>(new Set());
   const { login, register } = useAuth();

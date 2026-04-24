@@ -1,66 +1,94 @@
-import { useEffect, useState } from "react";
-import type { ChatMessage } from "../../components/chat/ChatWidget";
+import { useEffect, useState, useCallback } from "react";
+import { chatApi } from "../../api";
+import type { ChatConversationDto } from "../../api/types";
 
 export interface ChatClient {
+  id: number;
   email: string;
   name: string;
 }
 
-const CLIENT_LIST_KEY = "lumina_chat_list";
-const threadKey = (email: string) => `lumina_chat_${email}`;
+export interface ChatMessage {
+  id: string;
+  text: string;
+  sender: "client" | "studio";
+  timestamp: number;
+  senderName?: string;
+}
 
-const readJSON = <T,>(key: string, fallback: T): T => {
-  const raw = localStorage.getItem(key);
-  return raw ? (JSON.parse(raw) as T) : fallback;
-};
+function toClient(conv: ChatConversationDto): ChatClient {
+  return { id: conv.id, email: conv.clientEmail, name: conv.clientName };
+}
+
+function toMessage(m: ChatConversationDto["messages"][number]): ChatMessage {
+  return {
+    id: String(m.id),
+    text: m.text,
+    sender: m.sender === "Client" ? "client" : "studio",
+    timestamp: new Date(m.createdOn).getTime(),
+    senderName: m.senderName,
+  };
+}
 
 export function useAdminChat() {
-  const [clients, setClients] = useState<ChatClient[]>([]);
+  const [conversations, setConversations] = useState<ChatConversationDto[]>([]);
   const [selectedClient, setSelectedClient] = useState<ChatClient | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-  useEffect(() => {
-    setClients(readJSON<ChatClient[]>(CLIENT_LIST_KEY, []));
+  const loadConversations = useCallback(async () => {
+    try {
+      const data = await chatApi.listConversations();
+      setConversations(data);
+    } catch {
+      // server unavailable
+    }
   }, []);
+
+  useEffect(() => {
+    loadConversations();
+  }, [loadConversations]);
+
+  useEffect(() => {
+    const id = setInterval(loadConversations, 5000);
+    return () => clearInterval(id);
+  }, [loadConversations]);
 
   useEffect(() => {
     if (!selectedClient) {
       setMessages([]);
       return;
     }
-    setMessages(readJSON<ChatMessage[]>(threadKey(selectedClient.email), []));
-  }, [selectedClient]);
+    const conv = conversations.find((c) => c.id === selectedClient.id);
+    if (conv) setMessages(conv.messages.map(toMessage));
+  }, [selectedClient, conversations]);
 
   useEffect(() => {
-    if (!selectedClient) return;
-    const id = setInterval(() => {
-      setMessages(readJSON<ChatMessage[]>(threadKey(selectedClient.email), []));
-      setClients(readJSON<ChatClient[]>(CLIENT_LIST_KEY, []));
-    }, 2000);
-    return () => clearInterval(id);
+    if (selectedClient) chatApi.markRead(selectedClient.id).catch(() => {});
   }, [selectedClient]);
 
-  const sendReply = (text: string, senderName: string) => {
+  const clients = conversations.map(toClient);
+
+  const sendReply = async (text: string) => {
     if (!selectedClient) return;
-    const newMsg: ChatMessage = {
-      id: Date.now().toString(),
-      text,
-      sender: "studio",
-      timestamp: Date.now(),
-      senderName,
-    };
-    const updated = [...messages, newMsg];
-    setMessages(updated);
-    localStorage.setItem(threadKey(selectedClient.email), JSON.stringify(updated));
+    try {
+      await chatApi.sendMessage(selectedClient.id, { text });
+      const conv = await chatApi.getConversation(selectedClient.id);
+      setMessages(conv.messages.map(toMessage));
+    } catch {
+      // silent
+    }
   };
 
   const getLastMessage = (email: string): ChatMessage | null => {
-    const msgs = readJSON<ChatMessage[]>(threadKey(email), []);
-    return msgs.length > 0 ? msgs[msgs.length - 1] : null;
+    const conv = conversations.find((c) => c.clientEmail === email);
+    if (!conv || conv.messages.length === 0) return null;
+    return toMessage(conv.messages[conv.messages.length - 1]);
   };
 
-  const getUnreadCount = (email: string): number =>
-    readJSON<ChatMessage[]>(threadKey(email), []).filter((m) => m.sender === "client").length;
+  const getUnreadCount = (email: string): number => {
+    const conv = conversations.find((c) => c.clientEmail === email);
+    return conv?.unreadCount ?? 0;
+  };
 
   return {
     clients,

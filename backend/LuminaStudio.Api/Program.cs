@@ -78,9 +78,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
-app.UseRateLimiter();
-app.UseAuthentication();
-app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
@@ -89,7 +86,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
-app.UseHttpsRedirection();
+app.UseRateLimiter();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

@@ -1,7 +1,6 @@
 import { http } from "./client";
 import type {
   ChatConversationDto,
-  ChatMessageDto,
   SendChatMessageDto,
   ActionResponse,
 } from "./types";
@@ -11,7 +10,7 @@ export const chatApi = {
     http.post<ChatConversationDto>(`/chat/start?email=${encodeURIComponent(email)}&name=${encodeURIComponent(name)}`),
 
   sendMessage: (conversationId: number, dto: SendChatMessageDto) =>
-    http.post<ChatMessageDto>(`/chat/${conversationId}/messages`, dto),
+    http.post<ActionResponse>(`/chat/${conversationId}/messages`, dto),
 
   listConversations: () =>
     http.get<ChatConversationDto[]>("/chat"),
