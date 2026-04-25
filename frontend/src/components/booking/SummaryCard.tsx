@@ -3,11 +3,11 @@ import type { BookingFlow } from "./useBookingFlow";
 
 type Props = Pick<
   BookingFlow,
-  "selectedPhotographer" | "selectedDate" | "selectedPackage" | "peopleCount" | "clientName" | "clientEmail" | "canSubmit" | "handleConfirm"
+  "selectedPhotographer" | "selectedDate" | "selectedPackage" | "peopleCount" | "clientName" | "clientEmail" | "canSubmit" | "handleConfirm" | "submitting" | "error"
 >;
 
 export default function SummaryCard(props: Props) {
-  const { selectedPhotographer, selectedDate, selectedPackage, peopleCount, clientName, clientEmail, canSubmit, handleConfirm } = props;
+  const { selectedPhotographer, selectedDate, selectedPackage, peopleCount, clientName, clientEmail, canSubmit, handleConfirm, submitting, error } = props;
 
   const dateLabel = selectedDate
     ? new Date(selectedDate + "T00:00:00").toLocaleDateString("ro-RO", { day: "numeric", month: "long", year: "numeric" })
@@ -38,6 +38,12 @@ export default function SummaryCard(props: Props) {
           </div>
         </div>
 
+        {error && (
+          <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-xs text-red-400">
+            {error}
+          </div>
+        )}
+
         <button
           type="button"
           onClick={handleConfirm}
@@ -46,10 +52,10 @@ export default function SummaryCard(props: Props) {
             canSubmit ? "bg-gold-400 text-stone-950 hover:bg-gold-500" : "cursor-not-allowed bg-stone-800/60 text-stone-600"
           }`}
         >
-          Confirmă Programarea
+          {submitting ? "Se trimite..." : "Confirmă Programarea"}
         </button>
 
-        {!canSubmit && (
+        {!canSubmit && !submitting && (
           <div className="mt-3 space-y-1 text-[11px] text-stone-600">
             {!selectedPhotographer && <p>• Selectează un fotograf</p>}
             {!selectedDate && <p>• Selectează o dată disponibilă</p>}

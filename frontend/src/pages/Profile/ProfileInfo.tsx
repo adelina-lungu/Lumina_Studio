@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Camera, Mail, Phone, Shield } from "lucide-react";
+import { Mail, Phone, Shield } from "lucide-react";
 import type { User } from "../../contexts/AuthContext";
 
 interface Props {
@@ -33,13 +33,8 @@ export default function ProfileInfo({ user, editName, setEditName, editPhone, se
   return (
     <section className="mx-auto w-full max-w-2xl px-6 pt-32 pb-12">
       <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
-        <div className="relative">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gold-400 text-2xl font-bold text-stone-950 shadow-lg shadow-gold-400/20">
-            {initials}
-          </div>
-          <div className="absolute -bottom-1 -right-1 rounded-full bg-stone-800 p-1.5 ring-2 ring-stone-950">
-            <Camera size={12} className="text-stone-400" />
-          </div>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gold-400 text-2xl font-bold text-stone-950 shadow-lg shadow-gold-400/20">
+          {initials}
         </div>
 
         <div className="flex-1 text-center sm:text-left">

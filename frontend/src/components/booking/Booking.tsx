@@ -9,10 +9,16 @@ import { useBookingFlow } from "./useBookingFlow";
 
 interface BookingProps {
   preselectedPackage: ServicePackageDto | null;
+  onComplete?: () => void;
 }
 
-export default function Booking({ preselectedPackage }: BookingProps) {
+export default function Booking({ preselectedPackage, onComplete }: BookingProps) {
   const flow = useBookingFlow(preselectedPackage);
+
+  const handleModalClose = () => {
+    flow.reset();
+    onComplete?.();
+  };
 
   return (
     <>
@@ -61,6 +67,8 @@ export default function Booking({ preselectedPackage }: BookingProps) {
                 clientEmail={flow.clientEmail}
                 canSubmit={flow.canSubmit}
                 handleConfirm={flow.handleConfirm}
+                submitting={flow.submitting}
+                error={flow.error}
               />
             </div>
           </div>
@@ -69,8 +77,8 @@ export default function Booking({ preselectedPackage }: BookingProps) {
 
       {flow.selectedPhotographer && (
         <BookingModal
-          open={flow.modalOpen}
-          onClose={() => flow.setModalOpen(false)}
+          open={flow.submitted}
+          onClose={handleModalClose}
           photographerName={flow.selectedPhotographer.name}
           date={flow.selectedDate}
         />

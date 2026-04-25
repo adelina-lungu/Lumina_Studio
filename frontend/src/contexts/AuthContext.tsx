@@ -43,14 +43,17 @@ function toUser(dto: { id: number; name: string; email: string; phone: string; r
   return { id: dto.id, name: dto.name, email: dto.email, phone: dto.phone, role: mapRole(dto.role) };
 }
 
+const ERROR_MAP: Record<number, string> = {
+  400: "Datele introduse nu sunt valide.",
+  401: "Email sau parola incorecta.",
+  403: "Nu ai permisiunea necesara.",
+  409: "Acest email este deja inregistrat.",
+  429: "Prea multe incercari. Asteapta putin.",
+};
+
 function extractError(err: unknown): string {
   if (err instanceof ApiError) {
-    if (typeof err.body === "object" && err.body && "message" in err.body) {
-      return (err.body as { message: string }).message;
-    }
-    if (err.status === 401) return "Email sau parola incorecta.";
-    if (err.status === 409) return "Acest email este deja inregistrat.";
-    return `Eroare ${err.status}`;
+    return ERROR_MAP[err.status] ?? `Eroare ${err.status}`;
   }
   if (err instanceof TypeError && err.message === "Failed to fetch") {
     return "Nu s-a putut conecta la server.";
