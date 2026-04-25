@@ -106,7 +106,7 @@ export default function AdminFaqPage() {
           <div className="flex items-center gap-4">
             <div>
               <label className="text-xs font-medium text-stone-400 mr-2">Ordine:</label>
-              <input type="number" value={createForm.displayOrder} onChange={(e) => setCreateForm({ ...createForm, displayOrder: Number(e.target.value) })}
+              <input type="text" inputMode="numeric" value={createForm.displayOrder} onChange={(e) => { const v = e.target.value.replace(/\D/g, ""); setCreateForm({ ...createForm, displayOrder: v === "" ? 0 : Number(v) }); }}
                 className="w-20 rounded-lg border border-stone-800 bg-stone-900 py-1.5 px-3 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
             </div>
             <button onClick={handleCreate} className="cursor-pointer rounded-lg bg-gold-400 px-5 py-2.5 text-sm font-medium text-stone-950 hover:bg-gold-300">

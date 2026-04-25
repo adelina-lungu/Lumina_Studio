@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Users, Shield, ShieldOff, UserX, Search } from "lucide-react";
+import { Users, Shield, ShieldOff, UserX, UserCheck, Search } from "lucide-react";
 import { usersApi, useApiHandler } from "../../api";
 import type { UserDto } from "../../api/types";
 
@@ -30,6 +30,11 @@ export default function UsersPage() {
     if (res) { addToast("success", `${user.name} a fost banat.`); load(); }
   };
 
+  const handleUnban = async (user: UserDto) => {
+    const res = await call(() => usersApi.unban(user.id));
+    if (res) { addToast("success", `${user.name} a fost debanat.`); load(); }
+  };
+
   const handlePromote = async (user: UserDto) => {
     const res = await call(() => usersApi.promote(user.id));
     if (res) { addToast("success", `${user.name} a fost promovat la Admin.`); load(); }
@@ -52,7 +57,7 @@ export default function UsersPage() {
         <Users size={24} className="text-gold-400" />
         <div>
           <h1 className="font-serif text-2xl font-semibold text-stone-100">Utilizatori</h1>
-          <p className="mt-1 text-sm text-stone-500">Gestioneaza utilizatorii platformei.</p>
+          <p className="mt-1 text-sm text-stone-500">Gestionează utilizatorii platformei.</p>
         </div>
       </div>
 
@@ -61,7 +66,7 @@ export default function UsersPage() {
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-500" />
           <input
             type="text"
-            placeholder="Cauta dupa nume sau email..."
+            placeholder="Caută după nume sau email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-lg border border-stone-800 bg-stone-900/50 py-2.5 pl-10 pr-4 text-sm text-stone-100 placeholder:text-stone-600 focus:border-gold-400/50 focus:outline-none"
@@ -81,7 +86,7 @@ export default function UsersPage() {
       ) : filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-stone-800 px-6 py-14 text-center">
           <Users size={32} className="mx-auto mb-3 text-stone-700" />
-          <p className="text-sm text-stone-500">Niciun utilizator gasit.</p>
+          <p className="text-sm text-stone-500">Niciun utilizator găsit.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -90,7 +95,9 @@ export default function UsersPage() {
             return (
               <div
                 key={u.id}
-                className="group flex items-center gap-4 rounded-lg border border-stone-800 bg-stone-900/50 px-5 py-4 transition-colors hover:border-stone-700"
+                className={`group flex items-center gap-4 rounded-lg border border-stone-800 bg-stone-900/50 px-5 py-4 transition-colors hover:border-stone-700 ${
+                  u.isBanned ? "opacity-50" : ""
+                }`}
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-stone-800 text-xs font-bold text-stone-300">
                   {u.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)}
@@ -101,55 +108,61 @@ export default function UsersPage() {
                   <p className="text-xs text-stone-500">{u.email} &middot; {u.phone}</p>
                 </div>
 
-                <span className={`rounded border px-2.5 py-1 text-[10px] font-medium tracking-wide uppercase ${role.className}`}>
-                  {role.text}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className={`rounded border px-2.5 py-1 text-[10px] font-medium tracking-wide uppercase ${role.className}`}>
+                    {role.text}
+                  </span>
+                  {u.isBanned && (
+                    <span className="rounded border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-[10px] font-medium tracking-wide uppercase text-red-400">
+                      Banat
+                    </span>
+                  )}
+                </div>
 
                 <p className="hidden text-xs text-stone-600 sm:block">
                   {new Date(u.registeredOn).toLocaleDateString("ro-RO", { day: "numeric", month: "short", year: "numeric" })}
                 </p>
 
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {u.role === "Client" && (
+                  {u.role !== "Owner" && !u.isBanned && (
                     <button
                       onClick={() => handleBan(u)}
                       className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-red-500/20 hover:bg-red-500/10 hover:text-red-400"
-                      title="Baneaza"
+                      title="Banează"
                     >
                       <UserX size={15} />
                     </button>
                   )}
 
-                  {isOwner && u.role === "Client" && (
+                  {u.isBanned && (
+                    <button
+                      onClick={() => handleUnban(u)}
+                      className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-emerald-500/20 hover:bg-emerald-500/10 hover:text-emerald-400"
+                      title="Debanează"
+                    >
+                      <UserCheck size={15} />
+                    </button>
+                  )}
+
+                  {isOwner && u.role === "Client" && !u.isBanned && (
                     <button
                       onClick={() => handlePromote(u)}
                       className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-emerald-500/20 hover:bg-emerald-500/10 hover:text-emerald-400"
-                      title="Promoveaza la Admin"
+                      title="Promovează la Admin"
                     >
                       <Shield size={15} />
                     </button>
                   )}
 
                   {isOwner && u.role === "Admin" && (
-                    <>
-                      <button
-                        onClick={() => handleDemote(u)}
-                        className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-amber-500/20 hover:bg-amber-500/10 hover:text-amber-400"
-                        title="Retrogradeaza la Client"
-                      >
-                        <ShieldOff size={15} />
-                      </button>
-                      <button
-                        onClick={() => handleBan(u)}
-                        className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-red-500/20 hover:bg-red-500/10 hover:text-red-400"
-                        title="Baneaza"
-                      >
-                        <UserX size={15} />
-                      </button>
-                    </>
+                    <button
+                      onClick={() => handleDemote(u)}
+                      className="cursor-pointer rounded-lg border border-transparent p-2 text-stone-600 hover:border-amber-500/20 hover:bg-amber-500/10 hover:text-amber-400"
+                      title="Retrogradează la Client"
+                    >
+                      <ShieldOff size={15} />
+                    </button>
                   )}
-
-                  {/* unban would be shown for banned users - the backend doesn't expose isBanned in the DTO list currently, but we keep the action available */}
                 </div>
               </div>
             );

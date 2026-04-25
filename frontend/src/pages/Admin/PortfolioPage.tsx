@@ -136,9 +136,10 @@ export default function PortfolioPage() {
             <div>
               <label className="mb-1.5 block text-xs font-medium text-stone-400">Ordine Afisare</label>
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={form.displayOrder}
-                onChange={(e) => setForm({ ...form, displayOrder: Number(e.target.value) })}
+                onChange={(e) => { const v = e.target.value.replace(/\D/g, ""); setForm({ ...form, displayOrder: v === "" ? 0 : Number(v) }); }}
                 className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none"
               />
             </div>
