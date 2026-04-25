@@ -33,8 +33,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const USER_KEY = "lumina_user";
-
 function mapRole(apiRole: ApiRole): UserRole {
   if (apiRole === "Owner") return "owner";
   if (apiRole === "Admin") return "admin";
@@ -43,10 +41,6 @@ function mapRole(apiRole: ApiRole): UserRole {
 
 function toUser(dto: { id: number; name: string; email: string; phone: string; role: ApiRole }): User {
   return { id: dto.id, name: dto.name, email: dto.email, phone: dto.phone, role: mapRole(dto.role) };
-}
-
-function cacheUser(u: User) {
-  localStorage.setItem(USER_KEY, JSON.stringify(u));
 }
 
 function extractError(err: unknown): string {
@@ -74,14 +68,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (token) {
         try {
           const dto = await authApi.me();
-          const u = toUser(dto);
-          setUser(u);
-          cacheUser(u);
+          setUser(toUser(dto));
           setLoading(false);
           return;
         } catch {
           setToken(null);
-          localStorage.removeItem(USER_KEY);
         }
       }
       setLoading(false);
@@ -92,9 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string): Promise<string | null> => {
     try {
       const res = await authApi.login({ email, password });
-      const u = toUser(res.user);
-      setUser(u);
-      cacheUser(u);
+      setUser(toUser(res.user));
       return null;
     } catch (err) {
       return extractError(err);
@@ -104,9 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = useCallback(async (name: string, email: string, phone: string, password: string): Promise<string | null> => {
     try {
       const res = await authApi.register({ name, email, phone, password });
-      const u = toUser(res.user);
-      setUser(u);
-      cacheUser(u);
+      setUser(toUser(res.user));
       return null;
     } catch (err) {
       return extractError(err);
@@ -116,7 +103,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem(USER_KEY);
   }, []);
 
   const updateUser = useCallback(async (fields: Partial<Pick<User, "name" | "phone">>): Promise<string | null> => {
@@ -124,9 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const dto = { name: fields.name ?? user.name, phone: fields.phone ?? user.phone };
       await authApi.updateProfile(user.id, dto);
-      const updated = { ...user, ...fields };
-      setUser(updated);
-      cacheUser(updated);
+      setUser({ ...user, ...fields });
       return null;
     } catch (err) {
       return extractError(err);

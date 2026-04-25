@@ -33,7 +33,7 @@ export default function PhotographerPage() {
       <section className="px-6 py-16 md:px-10">
         <div className="mx-auto w-full max-w-2xl">
           <AvailabilityCalendar
-            photographerId={String(member.id)}
+            photographerId={member.id}
             photographerName={member.name}
             initialBusyDates={member.busyDates}
           />

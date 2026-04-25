@@ -1,37 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAuth, isStaff } from "../../contexts/AuthContext";
+import { photographersApi } from "../../api";
 
-export interface AvailabilityNotification {
-  id: string;
-  clientName: string;
-  clientEmail: string;
-  date: string;
-  photographerId: string;
-  timestamp: number;
-}
-
-const readLS = <T,>(key: string, fallback: T): T => {
-  const saved = localStorage.getItem(key);
-  return saved ? (JSON.parse(saved) as T) : fallback;
-};
-
-export function useAvailability(photographerId: string, initialBusyDates: string[]) {
+export function useAvailability(photographerId: number, initialBusyDates: string[]) {
   const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
+  const isAdmin = isStaff(user);
 
-  const busyKey = `lumina_busy_${photographerId}`;
-  const bookedKey = `lumina_booked_${photographerId}`;
-  const notifKey = `lumina_notif_${photographerId}`;
+  const [busyDates, setBusyDates] = useState<string[]>(initialBusyDates);
+  const [saving, setSaving] = useState(false);
 
-  const [busyDates, setBusyDates] = useState<string[]>(() => readLS(busyKey, initialBusyDates));
-  const [bookedDates, setBookedDates] = useState<string[]>(() => readLS<string[]>(bookedKey, []));
-  const [notifications, setNotifications] = useState<AvailabilityNotification[]>(() =>
-    readLS<AvailabilityNotification[]>(notifKey, [])
-  );
-
-  useEffect(() => { localStorage.setItem(busyKey, JSON.stringify(busyDates)); }, [busyDates, busyKey]);
-  useEffect(() => { localStorage.setItem(bookedKey, JSON.stringify(bookedDates)); }, [bookedDates, bookedKey]);
-  useEffect(() => { localStorage.setItem(notifKey, JSON.stringify(notifications)); }, [notifications, notifKey]);
+  useEffect(() => {
+    setBusyDates(initialBusyDates);
+  }, [initialBusyDates]);
 
   const [viewMonth, setViewMonth] = useState(() => {
     const now = new Date();
@@ -63,40 +43,28 @@ export function useAvailability(photographerId: string, initialBusyDates: string
   const prevMonth = () => setViewMonth((v) => (v.month === 0 ? { year: v.year - 1, month: 11 } : { ...v, month: v.month - 1 }));
   const nextMonth = () => setViewMonth((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { ...v, month: v.month + 1 }));
 
-  const toggleBusy = (dateStr: string) => {
-    if (busyDates.includes(dateStr)) {
-      setBusyDates((prev) => prev.filter((d) => d !== dateStr));
-    } else {
-      setBusyDates((prev) => [...prev, dateStr]);
-      setBookedDates((prev) => prev.filter((d) => d !== dateStr));
+  const toggleBusy = useCallback(async (dateStr: string) => {
+    if (saving) return;
+    setSaving(true);
+    try {
+      if (busyDates.includes(dateStr)) {
+        await photographersApi.removeAvailability(photographerId, dateStr);
+        setBusyDates((prev) => prev.filter((d) => d !== dateStr));
+      } else {
+        await photographersApi.setAvailability({ photographerId, date: dateStr, type: "Busy" });
+        setBusyDates((prev) => [...prev, dateStr]);
+      }
+    } catch {
+      // silently fail — dates stay unchanged
     }
-  };
-
-  const bookDate = (dateStr: string) => {
-    if (!user) return;
-    setBookedDates((prev) => [...prev, dateStr]);
-    setBusyDates((prev) => [...prev, dateStr]);
-    setNotifications((prev) => [
-      {
-        id: Date.now().toString(),
-        clientName: user.name,
-        clientEmail: user.email,
-        date: dateStr,
-        photographerId,
-        timestamp: Date.now(),
-      },
-      ...prev,
-    ]);
-  };
-
-  const clearNotifications = () => setNotifications([]);
+    setSaving(false);
+  }, [busyDates, photographerId, saving]);
 
   return {
     user,
     isAdmin,
     busyDates,
-    bookedDates,
-    notifications,
+    saving,
     calendarDays,
     monthLabel,
     toDateStr,
@@ -104,8 +72,6 @@ export function useAvailability(photographerId: string, initialBusyDates: string
     prevMonth,
     nextMonth,
     toggleBusy,
-    bookDate,
-    clearNotifications,
   };
 }
 

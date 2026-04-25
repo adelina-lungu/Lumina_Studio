@@ -10,14 +10,12 @@ interface Props {
   toDateStr: (day: number) => string;
   isPast: (day: number) => boolean;
   busyDates: string[];
-  bookedDates: string[];
   isAdmin: boolean;
-  hasUser: boolean;
-  onDayClick: (dateStr: string, free: boolean) => void;
+  onDayClick: (dateStr: string) => void;
 }
 
 export default function CalendarGrid({
-  calendarDays, monthLabel, prevMonth, nextMonth, toDateStr, isPast, busyDates, bookedDates, isAdmin, hasUser, onDayClick,
+  calendarDays, monthLabel, prevMonth, nextMonth, toDateStr, isPast, busyDates, isAdmin, onDayClick,
 }: Props) {
   return (
     <>
@@ -44,30 +42,23 @@ export default function CalendarGrid({
           const dateStr = toDateStr(day);
           const past = isPast(day);
           const busy = busyDates.includes(dateStr);
-          const booked = bookedDates.includes(dateStr);
-          const free = !busy && !past;
 
           return (
             <button
               key={`d-${day}`}
-              disabled={past && !isAdmin}
-              onClick={() => onDayClick(dateStr, free)}
+              disabled={past || (!isAdmin && busy)}
+              onClick={() => isAdmin && onDayClick(dateStr)}
               className={`relative flex h-11 items-center justify-center rounded-lg text-sm transition-all duration-200 ${
                 busy
-                  ? booked
-                    ? "bg-gold-400/10 border border-gold-400/30 text-gold-400 font-medium"
-                    : "bg-red-500/10 border border-red-500/20 text-red-400/70"
+                  ? "bg-red-500/10 border border-red-500/20 text-red-400/70"
                   : past
                     ? "text-stone-700 cursor-not-allowed"
                     : isAdmin
                       ? "border border-stone-800 text-stone-300 cursor-pointer hover:border-green-500/30 hover:bg-green-500/5 hover:text-green-400"
-                      : hasUser
-                        ? "border border-stone-800 text-stone-300 cursor-pointer hover:border-gold-400/30 hover:bg-gold-400/5 hover:text-gold-400"
-                        : "border border-stone-800 text-stone-300"
+                      : "border border-stone-800 text-stone-300"
               }`}
             >
               {day}
-              {booked && <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-gold-400" />}
             </button>
           );
         })}
@@ -75,7 +66,6 @@ export default function CalendarGrid({
 
       <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 border-t border-stone-800/50 pt-4 text-[11px] text-stone-500">
         <LegendChip className="border-red-500/30 bg-red-500/10" label="Ocupat" />
-        <LegendChip className="border-gold-400/30 bg-gold-400/10" label="Rezervat" />
         <LegendChip className="border-stone-700 bg-stone-900" label="Disponibil" />
       </div>
     </>
