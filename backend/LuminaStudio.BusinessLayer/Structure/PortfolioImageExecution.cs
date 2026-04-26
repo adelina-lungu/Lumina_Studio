@@ -23,11 +23,11 @@ public class PortfolioImageExecution : PortfolioImageActions, IPortfolioImageAct
 
     public ActionResponse Create(CreatePortfolioImageDto dto)
     {
-        return CreateExecution(dto);
+        return ActionResponse.SafeExecute(() => CreateExecution(dto));
     }
 
     public ActionResponse Delete(int id)
     {
-        return DeleteExecution(id);
+        return ActionResponse.SafeExecute(() => DeleteExecution(id));
     }
 }

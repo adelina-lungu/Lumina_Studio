@@ -17,16 +17,16 @@ public class TestimonialExecution : TestimonialActions, ITestimonialActions
 
     public ActionResponse Create(CreateTestimonialDto dto)
     {
-        return CreateExecution(dto);
+        return ActionResponse.SafeExecute(() => CreateExecution(dto));
     }
 
     public ActionResponse Approve(int id)
     {
-        return ApproveExecution(id);
+        return ActionResponse.SafeExecute(() => ApproveExecution(id));
     }
 
     public ActionResponse Delete(int id)
     {
-        return DeleteExecution(id);
+        return ActionResponse.SafeExecute(() => DeleteExecution(id));
     }
 }

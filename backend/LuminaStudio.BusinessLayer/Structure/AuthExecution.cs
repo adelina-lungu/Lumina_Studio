@@ -12,7 +12,7 @@ public class AuthExecution : AuthActions, IAuthActions
 
     public ActionResponse Register(UserRegisterDto dto)
     {
-        return RegisterExecution(dto);
+        return ActionResponse.SafeExecute(() => RegisterExecution(dto));
     }
 
     public (LoginResponseDto? Data, string? Error) Login(UserLoginDto dto)

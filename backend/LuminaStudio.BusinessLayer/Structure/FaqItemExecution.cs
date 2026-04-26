@@ -17,16 +17,16 @@ public class FaqItemExecution : FaqItemActions, IFaqItemActions
 
     public ActionResponse Create(CreateFaqItemDto dto)
     {
-        return CreateExecution(dto);
+        return ActionResponse.SafeExecute(() => CreateExecution(dto));
     }
 
     public ActionResponse Update(int id, UpdateFaqItemDto dto)
     {
-        return UpdateExecution(id, dto);
+        return ActionResponse.SafeExecute(() => UpdateExecution(id, dto));
     }
 
     public ActionResponse Delete(int id)
     {
-        return DeleteExecution(id);
+        return ActionResponse.SafeExecute(() => DeleteExecution(id));
     }
 }

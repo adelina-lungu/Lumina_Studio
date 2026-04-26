@@ -27,21 +27,21 @@ public class BookingExecution : BookingActions, IBookingActions
 
     public ActionResponse Create(CreateBookingDto dto, int userId)
     {
-        return CreateExecution(dto, userId);
+        return ActionResponse.SafeExecute(() => CreateExecution(dto, userId));
     }
 
     public ActionResponse Cancel(int id, int userId)
     {
-        return CancelExecution(id, userId);
+        return ActionResponse.SafeExecute(() => CancelExecution(id, userId));
     }
 
     public ActionResponse Confirm(int id)
     {
-        return ConfirmExecution(id);
+        return ActionResponse.SafeExecute(() => ConfirmExecution(id));
     }
 
     public ActionResponse Complete(int id)
     {
-        return CompleteExecution(id);
+        return ActionResponse.SafeExecute(() => CompleteExecution(id));
     }
 }
