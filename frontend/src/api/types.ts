@@ -14,6 +14,7 @@ export interface UserDto {
   role: UserRole;
   registeredOn: string;
   lastLoginAt: string | null;
+  isBanned: boolean;
 }
 
 export interface LoginResponseDto {

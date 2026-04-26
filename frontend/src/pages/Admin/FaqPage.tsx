@@ -21,11 +21,18 @@ export default function AdminFaqPage() {
 
   useEffect(() => { load(); }, [load]);
 
+  const validateFaq = (q: string, a: string): string | null => {
+    if (!q.trim() || !a.trim()) return "Completeaza intrebarea si raspunsul.";
+    if (q.trim().length < 5) return "Intrebarea trebuie sa aiba minim 5 caractere.";
+    if (q.trim().length > 250) return "Intrebarea nu poate depasi 250 caractere.";
+    if (a.trim().length < 5) return "Raspunsul trebuie sa aiba minim 5 caractere.";
+    if (a.trim().length > 2000) return "Raspunsul nu poate depasi 2000 caractere.";
+    return null;
+  };
+
   const handleCreate = async () => {
-    if (!createForm.question || !createForm.answer) {
-      addToast("error", "Completeaza intrebarea si raspunsul.");
-      return;
-    }
+    const err = validateFaq(createForm.question, createForm.answer);
+    if (err) { addToast("error", err); return; }
     const res = await call(() => faqApi.create(createForm));
     if (res) {
       addToast("success", "Intrebare adaugata.");
@@ -42,6 +49,8 @@ export default function AdminFaqPage() {
 
   const handleUpdate = async () => {
     if (!editForm || editingId === null) return;
+    const err = validateFaq(editForm.question, editForm.answer);
+    if (err) { addToast("error", err); return; }
     const res = await call(() => faqApi.update(editingId, editForm));
     if (res) {
       addToast("success", "Intrebare actualizata.");
@@ -82,20 +91,22 @@ export default function AdminFaqPage() {
         <div className="mb-6 rounded-lg border border-stone-800 bg-stone-900/50 p-6 space-y-4">
           <div>
             <label className="mb-1.5 block text-xs font-medium text-stone-400">Intrebare *</label>
-            <input type="text" value={createForm.question} onChange={(e) => setCreateForm({ ...createForm, question: e.target.value })}
+            <input type="text" value={createForm.question} onChange={(e) => setCreateForm({ ...createForm, question: e.target.value })} maxLength={250}
               className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 placeholder:text-stone-600 focus:border-gold-400/50 focus:outline-none"
               placeholder="Ex: Cat dureaza o sedinta foto?" />
+            <p className="mt-1 text-[11px] text-stone-600">{createForm.question.length}/250 (minim 5)</p>
           </div>
           <div>
             <label className="mb-1.5 block text-xs font-medium text-stone-400">Raspuns *</label>
-            <textarea value={createForm.answer} onChange={(e) => setCreateForm({ ...createForm, answer: e.target.value })} rows={3}
+            <textarea value={createForm.answer} onChange={(e) => setCreateForm({ ...createForm, answer: e.target.value })} rows={3} maxLength={2000}
               className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 placeholder:text-stone-600 focus:border-gold-400/50 focus:outline-none resize-none"
               placeholder="Raspunsul la intrebare..." />
+            <p className="mt-1 text-[11px] text-stone-600">{createForm.answer.length}/2000 (minim 5)</p>
           </div>
           <div className="flex items-center gap-4">
             <div>
               <label className="text-xs font-medium text-stone-400 mr-2">Ordine:</label>
-              <input type="number" value={createForm.displayOrder} onChange={(e) => setCreateForm({ ...createForm, displayOrder: Number(e.target.value) })}
+              <input type="text" inputMode="numeric" value={createForm.displayOrder} onChange={(e) => { const v = e.target.value.replace(/\D/g, ""); setCreateForm({ ...createForm, displayOrder: v === "" ? 0 : Number(v) }); }}
                 className="w-20 rounded-lg border border-stone-800 bg-stone-900 py-1.5 px-3 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
             </div>
             <button onClick={handleCreate} className="cursor-pointer rounded-lg bg-gold-400 px-5 py-2.5 text-sm font-medium text-stone-950 hover:bg-gold-300">

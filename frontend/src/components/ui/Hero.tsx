@@ -41,10 +41,6 @@ export default function Hero() {
           </Link>
         </div>
       </div>
-
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-fade-in-up opacity-0 delay-500">
-        <div className="animate-bounce-slow h-12 w-px bg-gradient-to-b from-transparent via-gold-400/50 to-transparent" />
-      </div>
     </section>
   );
 }

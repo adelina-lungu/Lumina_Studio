@@ -11,8 +11,9 @@ export function useBookingFlow(preselectedPackage: ServicePackageDto | null) {
   const [peopleCount, setPeopleCount] = useState(1);
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (photographers && photographers.length > 0 && !selectedPhotographer) {
@@ -62,12 +63,13 @@ export function useBookingFlow(preselectedPackage: ServicePackageDto | null) {
     setViewMonth((v) => (v.month === 11 ? { year: v.year + 1, month: 0 } : { ...v, month: v.month + 1 }));
 
   const canSubmit = Boolean(
-    selectedPhotographer && selectedDate && selectedPackage && clientName.trim() && clientEmail.trim() && !submitting
+    selectedPhotographer && selectedDate && selectedPackage && clientName.trim() && clientEmail.trim() && !submitting && !submitted
   );
 
   const handleConfirm = async () => {
     if (!canSubmit || !selectedPhotographer || !selectedPackage) return;
     setSubmitting(true);
+    setError(null);
     try {
       await bookingsApi.create({
         photographerId: selectedPhotographer.id,
@@ -77,12 +79,22 @@ export function useBookingFlow(preselectedPackage: ServicePackageDto | null) {
         clientName: clientName.trim(),
         clientEmail: clientEmail.trim(),
       });
-      setModalOpen(true);
+      setSubmitted(true);
     } catch {
-      // error handled by caller or toast
+      setError("Nu s-a putut trimite programarea. Încearcă din nou.");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const reset = () => {
+    setSelectedDate("");
+    setSelectedPackage(preselectedPackage);
+    setPeopleCount(1);
+    setClientName("");
+    setClientEmail("");
+    setSubmitted(false);
+    setError(null);
   };
 
   const changePhotographer = (p: PhotographerDto) => {
@@ -104,8 +116,7 @@ export function useBookingFlow(preselectedPackage: ServicePackageDto | null) {
     setClientName,
     clientEmail,
     setClientEmail,
-    modalOpen,
-    setModalOpen,
+    submitted,
     calendarDays,
     monthLabel,
     toDateStr,
@@ -116,6 +127,8 @@ export function useBookingFlow(preselectedPackage: ServicePackageDto | null) {
     canSubmit,
     handleConfirm,
     submitting,
+    error,
+    reset,
   };
 }
 

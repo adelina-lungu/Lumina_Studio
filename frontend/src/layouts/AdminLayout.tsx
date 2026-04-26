@@ -33,12 +33,18 @@ const NAV_ITEMS = [
 
 export default function AdminLayout() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    if (!user || !isStaff(user)) navigate(ROUTES.forbidden);
-  }, [user, navigate]);
+    if (!loading && (!user || !isStaff(user))) navigate(ROUTES.forbidden);
+  }, [user, loading, navigate]);
+
+  if (loading) return (
+    <div className="flex h-screen items-center justify-center bg-stone-950">
+      <div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-700 border-t-gold-400" />
+    </div>
+  );
 
   if (!user || !isStaff(user)) return null;
 

@@ -6,6 +6,7 @@ import ServicesTeaser from "./sections/ServicesTeaser";
 import TeamTeaser from "./sections/TeamTeaser";
 import TestimonialStrip from "./sections/TestimonialStrip";
 import FaqTeaser from "./sections/FaqTeaser";
+import ContactTeaser from "./sections/ContactTeaser";
 import type { LayoutContext } from "../../layouts/MainLayout";
 
 export default function HomePage() {
@@ -20,6 +21,7 @@ export default function HomePage() {
       <TestimonialStrip />
       <CtaBanner onOpenBooking={openBooking} />
       <FaqTeaser />
+      <ContactTeaser />
     </main>
   );
 }

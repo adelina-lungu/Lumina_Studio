@@ -162,8 +162,8 @@ export default function Contact() {
 
           <div className="rounded-lg border border-stone-800 overflow-hidden" style={{ minHeight: "400px" }}>
             <iframe
-              title="Locatia LUMINA Studio"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2720.5!2d28.8075!3d47.0365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c97c456a8c8b0d%3A0x7b3f3b1e3b3b3b3b!2sUniversitatea%20Tehnic%C4%83%20a%20Moldovei!5e0!3m2!1sro!2smd!4v1700000000000!5m2!1sro!2smd"
+              title="Locația LUMINA Studio"
+              src="https://maps.google.com/maps?q=Strada+Studentilor+9/11,+Chisinau,+Moldova&t=&z=16&ie=UTF8&iwloc=&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0 }}

@@ -14,8 +14,27 @@ interface FieldErrors {
   password?: string;
 }
 
-const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-const isValidPhone = (p: string) => /^\+?[0-9]{7,15}$/.test(p.replace(/\s/g, ""));
+const isValidEmail = (e: string) =>
+  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(e) && !e.includes("..");
+
+const isValidPhone = (p: string) => {
+  const digits = p.replace(/[\s\-().]/g, "");
+  return /^\+?[0-9]{7,15}$/.test(digits);
+};
+
+function passwordStrength(pw: string): { score: number; label: string; color: string } {
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+
+  if (score <= 1) return { score: 1, label: "Slaba", color: "bg-red-500" };
+  if (score <= 2) return { score: 2, label: "Medie", color: "bg-yellow-500" };
+  if (score <= 3) return { score: 3, label: "Buna", color: "bg-green-500" };
+  return { score: 4, label: "Puternica", color: "bg-emerald-400" };
+}
 
 export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
@@ -23,7 +42,6 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [, setErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState("");
   const [touched, setTouched] = useState<Set<string>>(new Set());
   const { login, register } = useAuth();
@@ -47,7 +65,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
       else if (name.trim().length < 2) errs.name = "Minim 2 caractere.";
 
       if (!phone.trim()) errs.phone = "Telefonul este obligatoriu.";
-      else if (!isValidPhone(phone)) errs.phone = "Format invalid (ex: +373 60123456).";
+      else if (!isValidPhone(phone)) errs.phone = "Format invalid (ex: +373 60 123 456).";
     }
 
     return errs;
@@ -61,11 +79,7 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
     const errs = validate();
     setTouched(new Set(["name", "email", "phone", "password"]));
 
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      return;
-    }
-    setErrors({});
+    if (Object.keys(errs).length > 0) return;
 
     if (isLogin) {
       const err = await login(email, password);
@@ -80,13 +94,14 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
 
   const resetAndClose = () => {
     setName(""); setEmail(""); setPhone(""); setPassword("");
-    setErrors({}); setServerError(""); setTouched(new Set());
+    setServerError(""); setTouched(new Set());
+    setIsLogin(true);
     onClose();
   };
 
   const switchMode = () => {
     setIsLogin(!isLogin);
-    setErrors({}); setServerError(""); setTouched(new Set());
+    setServerError(""); setTouched(new Set());
   };
 
   const inputClass = (field: keyof FieldErrors) =>
@@ -175,7 +190,16 @@ export default function AuthModal({ open, onClose }: AuthModalProps) {
             />
             {fieldError("password")
               ? <p className="mt-1 text-xs text-red-400">{fieldError("password")}</p>
-              : !isLogin && <p className="mt-1 text-xs text-stone-600">Minim 6 caractere</p>
+              : !isLogin && password.length > 0 ? (
+                <div className="mt-2 flex items-center gap-2">
+                  <div className="flex flex-1 gap-1">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${i <= passwordStrength(password).score ? passwordStrength(password).color : "bg-stone-800"}`} />
+                    ))}
+                  </div>
+                  <span className="text-[10px] tracking-wide text-stone-500">{passwordStrength(password).label}</span>
+                </div>
+              ) : !isLogin && <p className="mt-1 text-xs text-stone-600">Minim 6 caractere</p>
             }
           </div>
 

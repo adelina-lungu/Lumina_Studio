@@ -1,32 +1,20 @@
-import { useState } from "react";
 import { Calendar, Lock } from "lucide-react";
 import { useAvailability } from "./useAvailability";
 import CalendarGrid from "./CalendarGrid";
-import NotificationBell from "./NotificationBell";
-import ConfirmBookingModal from "./ConfirmBookingModal";
 
 interface AvailabilityCalendarProps {
-  photographerId: string;
+  photographerId: number;
   photographerName: string;
   initialBusyDates: string[];
 }
 
 export default function AvailabilityCalendar({ photographerId, photographerName, initialBusyDates }: AvailabilityCalendarProps) {
   const a = useAvailability(photographerId, initialBusyDates);
-  const [confirmDate, setConfirmDate] = useState<string | null>(null);
 
-  const handleDayClick = (dateStr: string, free: boolean) => {
+  const handleDayClick = (dateStr: string) => {
     if (a.isAdmin) {
       a.toggleBusy(dateStr);
-    } else if (free && a.user) {
-      setConfirmDate(dateStr);
     }
-  };
-
-  const handleConfirm = () => {
-    if (!confirmDate) return;
-    a.bookDate(confirmDate);
-    setConfirmDate(null);
   };
 
   return (
@@ -35,11 +23,11 @@ export default function AvailabilityCalendar({ photographerId, photographerName,
         <div className="flex items-center gap-2">
           <Calendar size={16} className="text-gold-400" />
           <h3 className="text-sm font-semibold tracking-wide uppercase text-stone-200">
-            {a.isAdmin ? "Gestioneaza disponibilitatea" : "Disponibilitate"}
+            {a.isAdmin ? "Gestioneaza disponibilitatea" : "Disponibilitate"} — {photographerName}
           </h3>
         </div>
-        {a.isAdmin && (
-          <NotificationBell notifications={a.notifications} onClear={a.clearNotifications} />
+        {a.saving && (
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-stone-700 border-t-gold-400" />
         )}
       </div>
 
@@ -59,21 +47,10 @@ export default function AvailabilityCalendar({ photographerId, photographerName,
           toDateStr={a.toDateStr}
           isPast={a.isPast}
           busyDates={a.busyDates}
-          bookedDates={a.bookedDates}
           isAdmin={a.isAdmin}
-          hasUser={Boolean(a.user)}
           onDayClick={handleDayClick}
         />
       </div>
-
-      {confirmDate && !a.isAdmin && (
-        <ConfirmBookingModal
-          date={confirmDate}
-          photographerName={photographerName}
-          onCancel={() => setConfirmDate(null)}
-          onConfirm={handleConfirm}
-        />
-      )}
     </div>
   );
 }

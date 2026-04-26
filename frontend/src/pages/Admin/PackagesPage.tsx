@@ -143,7 +143,7 @@ export default function PackagesPage() {
             <div>
               <label className="mb-1.5 block text-xs font-medium text-stone-400">Pret</label>
               <div className="flex gap-2">
-                <input type="number" value={createForm.price} onChange={(e) => setCreateForm({ ...createForm, price: Number(e.target.value) })}
+                <input type="text" inputMode="decimal" value={createForm.price} onChange={(e) => { const v = e.target.value.replace(/[^\d.]/g, "").replace(/(\..*)\./g, "$1"); setCreateForm({ ...createForm, price: v === "" ? 0 : Number(v) }); }}
                   className="flex-1 rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
                 <input type="text" value={createForm.currency} onChange={(e) => setCreateForm({ ...createForm, currency: e.target.value })}
                   className="w-16 rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
@@ -221,7 +221,7 @@ export default function PackagesPage() {
                     <div>
                       <label className="mb-1.5 block text-xs font-medium text-stone-400">Pret</label>
                       <div className="flex gap-2">
-                        <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })}
+                        <input type="text" inputMode="decimal" value={form.price} onChange={(e) => { const v = e.target.value.replace(/[^\d.]/g, "").replace(/(\..*)\./g, "$1"); setForm({ ...form, price: v === "" ? 0 : Number(v) }); }}
                           className="flex-1 rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />
                         <input type="text" value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })}
                           className="w-16 rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 focus:border-gold-400/50 focus:outline-none" />

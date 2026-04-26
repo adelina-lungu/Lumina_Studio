@@ -58,7 +58,7 @@ export default function BookingDrawer({ open, onClose, preselectedPackage }: Boo
 
         {/* booking content — hide its own heading via CSS */}
         <div className="pb-10 [&>section>div>div:first-child]:hidden">
-          <Booking preselectedPackage={preselectedPackage} />
+          <Booking preselectedPackage={preselectedPackage} onComplete={onClose} />
         </div>
       </div>
     </>
