@@ -52,7 +52,7 @@ export const testimonialsApi = {
     http.get<TestimonialDto[]>("/testimonials/all"),
 
   create: (dto: CreateTestimonialDto) =>
-    http.post<TestimonialDto>("/testimonials", dto),
+    http.post<ActionResponse>("/testimonials", dto),
 
   approve: (id: number) =>
     http.post<ActionResponse>(`/testimonials/${id}/approve`),
