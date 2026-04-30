@@ -43,6 +43,9 @@ namespace LuminaStudio.Api.Controllers
         [HttpPost("start")]
         public IActionResult StartConversation([FromQuery] string email, [FromQuery] string name)
         {
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(name))
+                return BadRequest(new { message = "Email and name are required." });
+
             int? userId = null;
             if (User.Identity?.IsAuthenticated == true)
                 userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
