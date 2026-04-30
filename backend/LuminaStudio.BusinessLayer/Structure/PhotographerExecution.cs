@@ -32,26 +32,26 @@ public class PhotographerExecution : PhotographerActions, IPhotographerActions
 
     public ActionResponse Create(CreatePhotographerDto dto)
     {
-        return CreateExecution(dto);
+        return ActionResponse.SafeExecute(() => CreateExecution(dto));
     }
 
     public ActionResponse Update(int id, UpdatePhotographerDto dto)
     {
-        return UpdateExecution(id, dto);
+        return ActionResponse.SafeExecute(() => UpdateExecution(id, dto));
     }
 
     public ActionResponse Delete(int id)
     {
-        return DeleteExecution(id);
+        return ActionResponse.SafeExecute(() => DeleteExecution(id));
     }
 
     public ActionResponse SetAvailability(SetAvailabilityDto dto)
     {
-        return SetAvailabilityExecution(dto);
+        return ActionResponse.SafeExecute(() => SetAvailabilityExecution(dto));
     }
 
     public ActionResponse RemoveAvailability(int photographerId, DateTime date)
     {
-        return RemoveAvailabilityExecution(photographerId, date);
+        return ActionResponse.SafeExecute(() => RemoveAvailabilityExecution(photographerId, date));
     }
 }

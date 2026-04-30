@@ -27,11 +27,11 @@ public class ChatExecution : ChatActions, IChatActions
 
     public ActionResponse SendMessage(int conversationId, SendChatMessageDto dto, string senderName, bool isStudio)
     {
-        return SendMessageExecution(conversationId, dto, senderName, isStudio);
+        return ActionResponse.SafeExecute(() => SendMessageExecution(conversationId, dto, senderName, isStudio));
     }
 
     public ActionResponse MarkAsRead(int conversationId)
     {
-        return MarkAsReadExecution(conversationId);
+        return ActionResponse.SafeExecute(() => MarkAsReadExecution(conversationId));
     }
 }

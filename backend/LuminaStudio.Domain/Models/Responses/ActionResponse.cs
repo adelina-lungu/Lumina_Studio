@@ -9,4 +9,16 @@ public class ActionResponse
     public static ActionResponse Ok(string message = "") => new() { Success = true, Message = message };
 
     public static ActionResponse Fail(string message) => new() { Success = false, Message = message };
+
+    public static ActionResponse SafeExecute(Func<ActionResponse> action)
+    {
+        try
+        {
+            return action();
+        }
+        catch (Exception)
+        {
+            return Fail("A database error occurred. Please try again.");
+        }
+    }
 }

@@ -52,7 +52,7 @@ export const testimonialsApi = {
     http.get<TestimonialDto[]>("/testimonials/all"),
 
   create: (dto: CreateTestimonialDto) =>
-    http.post<TestimonialDto>("/testimonials", dto),
+    http.post<ActionResponse>("/testimonials", dto),
 
   approve: (id: number) =>
     http.post<ActionResponse>(`/testimonials/${id}/approve`),
@@ -66,7 +66,7 @@ export const faqApi = {
     http.get<FaqItemDto[]>("/faq"),
 
   create: (dto: CreateFaqItemDto) =>
-    http.post<FaqItemDto>("/faq", dto),
+    http.post<ActionResponse>("/faq", dto),
 
   update: (id: number, dto: UpdateFaqItemDto) =>
     http.put<ActionResponse>(`/faq/${id}`, dto),

@@ -17,16 +17,16 @@ public class ContactMessageExecution : ContactMessageActions, IContactMessageAct
 
     public ActionResponse Create(CreateContactMessageDto dto, int? userId)
     {
-        return CreateExecution(dto, userId);
+        return ActionResponse.SafeExecute(() => CreateExecution(dto, userId));
     }
 
     public ActionResponse MarkAsRead(int id)
     {
-        return MarkAsReadExecution(id);
+        return ActionResponse.SafeExecute(() => MarkAsReadExecution(id));
     }
 
     public ActionResponse MarkAsResolved(int id)
     {
-        return MarkAsResolvedExecution(id);
+        return ActionResponse.SafeExecute(() => MarkAsResolvedExecution(id));
     }
 }
