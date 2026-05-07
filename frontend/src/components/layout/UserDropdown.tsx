@@ -38,7 +38,7 @@ export default function UserDropdown() {
             <p className="text-sm font-medium text-stone-100">{user.name}</p>
             <p className="text-xs text-stone-500">{user.email}</p>
             {isStaff(user) && (
-              <span className="mt-1 inline-block rounded bg-gold-400/10 border border-gold-400/30 px-2 py-0.5 text-[10px] font-medium tracking-wide uppercase text-gold-400">
+              <span className="mt-1 inline-block rounded bg-gold-400/10 border border-gold-400/30 px-2 py-0.5 text-xs font-medium tracking-wide uppercase text-gold-400">
                 {user.role === "owner" ? "Owner" : "Admin"}
               </span>
             )}

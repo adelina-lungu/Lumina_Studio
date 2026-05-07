@@ -86,6 +86,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
+app.UseStaticFiles();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();

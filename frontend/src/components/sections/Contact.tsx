@@ -160,7 +160,7 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-stone-800 overflow-hidden" style={{ minHeight: "400px" }}>
+          <div className="rounded-lg border border-stone-800 overflow-hidden min-h-96">
             <iframe
               title="Locația LUMINA Studio"
               src="https://maps.google.com/maps?q=Strada+Studentilor+9/11,+Chisinau,+Moldova&t=&z=16&ie=UTF8&iwloc=&output=embed"

@@ -20,6 +20,12 @@ export const portfolioApi = {
   create: (dto: CreatePortfolioImageDto) =>
     http.post<ActionResponse>("/portfolio", dto),
 
+  upload: (file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return http.upload<{ url: string }>("/portfolio/upload", fd);
+  },
+
   delete: (id: number) =>
     http.delete<ActionResponse>(`/portfolio/${id}`),
 };

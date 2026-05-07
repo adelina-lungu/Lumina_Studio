@@ -49,5 +49,8 @@ Backup/
 .DS_Store
 Thumbs.db
 
+# Uploads
+**/wwwroot/uploads/
+
 # Misc
 .claude/

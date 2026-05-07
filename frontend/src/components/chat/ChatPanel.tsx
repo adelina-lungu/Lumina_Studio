@@ -36,13 +36,13 @@ export default function ChatPanel({ user, messages, onClose, onSend }: Props) {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex h-[500px] w-[360px] flex-col overflow-hidden rounded-lg border border-stone-800 bg-stone-950 shadow-2xl animate-fade-in-up sm:right-10">
+    <div className="fixed bottom-6 right-6 z-50 flex h-[min(500px,80vh)] w-[min(360px,90vw)] flex-col overflow-hidden rounded-lg border border-stone-800 bg-stone-950 shadow-2xl animate-fade-in-up sm:right-10">
       <div className="flex items-center justify-between border-b border-stone-800 bg-stone-900/80 px-4 py-3">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold-400 text-xs font-bold text-stone-950">LS</div>
           <div>
             <p className="text-sm font-semibold text-stone-100">Lumina Studio</p>
-            <p className="text-[11px] text-green-400 flex items-center gap-1">
+            <p className="text-xs text-green-400 flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
               Online
             </p>
@@ -69,7 +69,7 @@ export default function ChatPanel({ user, messages, onClose, onSend }: Props) {
                   msg.sender === "client" ? "bg-gold-400 text-stone-950" : "border border-stone-800 bg-stone-900 text-stone-200"
                 }`}>
                   <p className="text-sm leading-relaxed">{msg.text}</p>
-                  <p className={`mt-1 text-[10px] text-right ${msg.sender === "client" ? "text-stone-950/50" : "text-stone-600"}`}>
+                  <p className={`mt-1 text-xs text-right ${msg.sender === "client" ? "text-stone-950/50" : "text-stone-600"}`}>
                     {formatTime(msg.timestamp)}
                   </p>
                 </div>

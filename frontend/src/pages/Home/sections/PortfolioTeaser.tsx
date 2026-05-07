@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { portfolioApi } from "../../../api";
+import { portfolioApi, resolveImageUrl } from "../../../api";
 import { useFetch } from "../../../hooks/useFetch";
 import { ROUTES } from "../../../constants";
 import SectionHeading from "./SectionHeading";
@@ -29,7 +29,7 @@ export default function PortfolioTeaser() {
                 className={`group relative overflow-hidden ${i === 0 ? "row-span-2 aspect-[3/4] md:col-span-1" : "aspect-square"}`}
               >
                 <img
-                  src={img.src}
+                  src={resolveImageUrl(img.src)}
                   alt={img.alt}
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
