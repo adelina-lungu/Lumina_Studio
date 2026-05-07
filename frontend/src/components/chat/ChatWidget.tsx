@@ -16,7 +16,7 @@ export default function ChatWidget() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-gold-400 text-stone-950 shadow-lg shadow-gold-400/20 transition-all duration-300 hover:bg-gold-500 hover:scale-110"
+          className="fixed bottom-4 right-4 z-50 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-gold-400 text-stone-950 shadow-lg shadow-gold-400/20 transition-all duration-300 hover:bg-gold-500 hover:scale-110 sm:bottom-6 sm:right-6 sm:h-14 sm:w-14"
         >
           <MessageCircle size={24} />
           {user && unreadCount > 0 && (
