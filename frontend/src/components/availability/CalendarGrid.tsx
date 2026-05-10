@@ -31,7 +31,7 @@ export default function CalendarGrid({
 
       <div className="grid grid-cols-7 mb-2">
         {WEEKDAYS.map((d) => (
-          <div key={d} className="py-1 text-center text-[11px] font-semibold uppercase tracking-wider text-stone-600">{d}</div>
+          <div key={d} className="py-1 text-center text-xs font-semibold uppercase tracking-wider text-stone-600">{d}</div>
         ))}
       </div>
 
@@ -64,7 +64,7 @@ export default function CalendarGrid({
         })}
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 border-t border-stone-800/50 pt-4 text-[11px] text-stone-500">
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 border-t border-stone-800/50 pt-4 text-xs text-stone-500">
         <LegendChip className="border-red-500/30 bg-red-500/10" label="Ocupat" />
         <LegendChip className="border-stone-700 bg-stone-900" label="Disponibil" />
       </div>

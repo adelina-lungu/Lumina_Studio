@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { portfolioApi } from "../../api";
+import { portfolioApi, resolveImageUrl } from "../../api";
 import { useFetch } from "../../hooks/useFetch";
 import type { PortfolioImageDto } from "../../api/types";
 
@@ -81,7 +81,7 @@ function PortfolioCard({ image }: { image: PortfolioImageDto }) {
       <div className="group relative mb-4 overflow-hidden break-inside-avoid">
       <div className={`relative overflow-hidden ${aspectClass}`}>
         <img
-          src={image.src}
+          src={resolveImageUrl(image.src)}
           alt={image.alt}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"

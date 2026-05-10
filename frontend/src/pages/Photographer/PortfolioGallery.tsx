@@ -1,3 +1,4 @@
+import { resolveImageUrl } from "../../api";
 import type { PortfolioImageDto } from "../../api/types";
 
 interface Props {
@@ -21,7 +22,7 @@ export default function PortfolioGallery({ firstName, photos }: Props) {
           {photos.map((img) => (
             <div key={img.id} className="group relative mb-4 overflow-hidden break-inside-avoid">
               <div className={`relative overflow-hidden ${aspectClass(img.aspect)}`}>
-                <img src={img.src} alt={img.alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+                <img src={resolveImageUrl(img.src)} alt={img.alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
                 <div className="absolute inset-0 flex items-end bg-gradient-to-t from-stone-950/80 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                   <div className="p-5">
                     <p className="text-xs font-medium tracking-[0.2em] uppercase text-gold-400">{img.category}</p>

@@ -1,4 +1,10 @@
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5125/api";
+const BACKEND_HOST = BASE_URL.replace(/\/api$/, "");
+
+export function resolveImageUrl(src: string): string {
+  if (src.startsWith("http")) return src;
+  return `${BACKEND_HOST}${src}`;
+}
 
 export class ApiError extends Error {
   status: number;
@@ -28,8 +34,10 @@ async function request<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
+  const isFormData = options.body instanceof FormData;
+
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...((options.headers as Record<string, string>) || {}),
   };
 
@@ -61,4 +69,6 @@ export const http = {
   patch: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: "PATCH", body: body ? JSON.stringify(body) : undefined }),
   delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
+  upload: <T>(path: string, formData: FormData) =>
+    request<T>(path, { method: "POST", body: formData }),
 };

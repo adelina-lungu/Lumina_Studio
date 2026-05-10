@@ -19,7 +19,7 @@ export default function Hero() {
           Studio Foto
         </p>
 
-        <h1 className="font-serif text-4xl font-semibold leading-tight tracking-tight text-stone-50 sm:text-5xl md:text-7xl lg:text-8xl 2xl:text-9xl animate-fade-in-up opacity-0 delay-200">
+        <h1 className="font-serif text-4xl font-semibold leading-tight tracking-tight text-stone-50 sm:text-5xl md:text-7xl lg:text-8xl animate-fade-in-up opacity-0 delay-200">
           Capturing Light,
           <br />
           <span className="italic text-gold-400">Defining Moments.</span>

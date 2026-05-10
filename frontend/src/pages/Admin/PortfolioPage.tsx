@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
-import { Image, Plus, Trash2, X } from "lucide-react";
-import { portfolioApi, photographersApi, useApiHandler } from "../../api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Image, Plus, Trash2, Upload, X } from "lucide-react";
+import { portfolioApi, photographersApi, useApiHandler, resolveImageUrl } from "../../api";
 import type { PortfolioImageDto, PhotographerDto, CreatePortfolioImageDto, PortfolioCategory, PortfolioAspect } from "../../api/types";
 
 const CATEGORIES: PortfolioCategory[] = ["Fashion", "Wedding", "Portrait"];
@@ -23,6 +23,10 @@ export default function PortfolioPage() {
     isPublished: true,
     displayOrder: 0,
   });
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
     const [imgs, photos] = await Promise.all([
@@ -36,16 +40,44 @@ export default function PortfolioPage() {
 
   useEffect(() => { load(); }, [load]);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    setFile(f);
+    if (f) {
+      setPreview(URL.createObjectURL(f));
+      setForm((prev) => ({ ...prev, src: "" }));
+    } else {
+      setPreview(null);
+    }
+  };
+
   const handleCreate = async () => {
-    if (!form.src || !form.alt) {
-      addToast("error", "Completeaza URL-ul si descrierea.");
+    if (!file && !form.src) {
+      addToast("error", "Incarca o imagine sau introdu un URL.");
       return;
     }
-    const res = await call(() => portfolioApi.create(form));
+    if (!form.alt) {
+      addToast("error", "Completeaza descrierea.");
+      return;
+    }
+
+    let src = form.src;
+
+    if (file) {
+      setUploading(true);
+      const uploadRes = await call(() => portfolioApi.upload(file));
+      setUploading(false);
+      if (!uploadRes) return;
+      src = uploadRes.url;
+    }
+
+    const res = await call(() => portfolioApi.create({ ...form, src }));
     if (res) {
       addToast("success", "Imagine adaugata cu succes.");
       setShowForm(false);
       setForm({ src: "", alt: "", category: "Fashion", aspect: "Wide", photographerId: null, isPublished: true, displayOrder: 0 });
+      setFile(null);
+      setPreview(null);
       load();
     }
   };
@@ -83,14 +115,26 @@ export default function PortfolioPage() {
         <div className="mb-6 rounded-lg border border-stone-800 bg-stone-900/50 p-6 space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-stone-400">URL Imagine *</label>
-              <input
-                type="url"
-                value={form.src}
-                onChange={(e) => setForm({ ...form, src: e.target.value })}
-                placeholder="https://example.com/photo.jpg"
-                className="w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 placeholder:text-stone-600 focus:border-gold-400/50 focus:outline-none"
-              />
+              <label className="mb-1.5 block text-xs font-medium text-stone-400">Imagine *</label>
+              <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp" onChange={handleFileChange} className="hidden" />
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="flex w-full cursor-pointer items-center gap-2 rounded-lg border border-dashed border-stone-700 bg-stone-900 py-2.5 px-4 text-sm text-stone-400 transition-colors hover:border-gold-400/50 hover:text-stone-300"
+              >
+                <Upload size={16} />
+                {file ? file.name : "Alege fisier..."}
+              </button>
+              {preview && <img src={preview} alt="Preview" className="mt-2 h-20 w-20 rounded object-cover border border-stone-800" />}
+              {!file && (
+                <input
+                  type="url"
+                  value={form.src}
+                  onChange={(e) => setForm({ ...form, src: e.target.value })}
+                  placeholder="...sau introdu URL"
+                  className="mt-2 w-full rounded-lg border border-stone-800 bg-stone-900 py-2.5 px-4 text-sm text-stone-100 placeholder:text-stone-600 focus:border-gold-400/50 focus:outline-none"
+                />
+              )}
             </div>
             <div>
               <label className="mb-1.5 block text-xs font-medium text-stone-400">Descriere (Alt) *</label>
@@ -156,9 +200,10 @@ export default function PortfolioPage() {
             </label>
             <button
               onClick={handleCreate}
-              className="cursor-pointer rounded-lg bg-gold-400 px-5 py-2.5 text-sm font-medium text-stone-950 transition-colors hover:bg-gold-300"
+              disabled={uploading}
+              className="cursor-pointer rounded-lg bg-gold-400 px-5 py-2.5 text-sm font-medium text-stone-950 transition-colors hover:bg-gold-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Salveaza
+              {uploading ? "Se incarca..." : "Salveaza"}
             </button>
           </div>
         </div>
@@ -198,7 +243,7 @@ export default function PortfolioPage() {
           {filtered.map((img) => (
             <div key={img.id} className="group relative overflow-hidden rounded-lg border border-stone-800 bg-stone-900/50">
               <img
-                src={img.src}
+                src={resolveImageUrl(img.src)}
                 alt={img.alt}
                 className="aspect-square w-full object-cover"
                 loading="lazy"

@@ -71,7 +71,7 @@ export default function MenuOverlay({ open, onClose, onBookingClick }: MenuOverl
                   <InfoRow icon={<Clock size={15} className="mt-0.5 shrink-0 text-gold-400/60" />} label="Program" value="Luni — Vineri: 09:00 — 19:00" />
                 </div>
                 <div className="my-6 h-px bg-gradient-to-r from-gold-400/20 via-gold-400/10 to-transparent" />
-                <p className="text-[11px] text-stone-600">&copy; 2026 Lumina Studio</p>
+                <p className="text-xs text-stone-600">&copy; 2026 Lumina Studio</p>
               </div>
             </aside>
           </div>
@@ -86,7 +86,7 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string;
     <div className="flex items-start gap-3">
       {icon}
       <div>
-        <p className="text-[10px] font-medium tracking-wide uppercase text-stone-600">{label}</p>
+        <p className="text-xs font-medium tracking-wide uppercase text-stone-600">{label}</p>
         <p className="text-sm text-stone-300 mt-0.5">{value}</p>
       </div>
     </div>

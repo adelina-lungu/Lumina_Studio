@@ -1,4 +1,4 @@
-export { ApiError, setToken } from "./client";
+export { ApiError, setToken, resolveImageUrl } from "./client";
 export { authApi } from "./auth";
 export { usersApi } from "./users";
 export { bookingsApi } from "./bookings";
